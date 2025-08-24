@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import StudentLoginSection from "./section/StudentLoginSection";
+import FacultyLoginSection from "./section/FacultyLoginSection";
 import collegeLogo from "../../assets/mainImage/college-logo.jpeg"
 
 
 
 const LoginPage: React.FC = () => {
+  const[activeTab,setActiveTab] = useState<"Student"|"Faculty">("Student");
 return (
     <div className="min-h-screen flex items-center justify-center bg-white p-4 font-sans">
       <div className="flex flex-col md:flex-row bg-[#fffaf0] rounded-2xl shadow-lg w-full max-w-4xl border-2 border-[#8b5e3c]">
@@ -31,10 +33,17 @@ return (
         </div>
         <div className="w-full md:w-1/2 p-8 text-[#5a3e2b] flex flex-col bg-white rounded-2xl">
           <div className="grid grid-cols-2 gap-4 text-2l font-bold mb-5">
-            <button className="bg-[#b77039] text-white py-2 px-4 rounded-xl hover:bg-[#8b4513] transition-colors duration-300">Student</button>
-            <button className="bg-[#b77039] text-white py-2 px-4 rounded-xl hover:bg-[#8b4513] transition-colors duration-300">Faculty</button>
+            <button className={`py-2 px-4 rounded-xl hover:bg-[#8b4513] transition-colors duration-300 ${
+              activeTab === "Student" ? "bg-[#b77039] text-white":"bg-gray-200 text-[#5a3e2b]"}`}
+              onClick={()=> setActiveTab("Student")}
+            >Student</button>
+            <button className={`py-2 px-4 rounded-xl hover:bg-[#8b4513] transition-colors duration-300 ${
+              activeTab === "Faculty" ? "bg-[#b77039] text-white" : "bg-gray-200 text-[#5a3e2b]"}`}
+              onClick={()=>setActiveTab("Faculty")}
+            >Faculty</button>
         </div>
-         <StudentLoginSection/>
+        {activeTab === "Student" ?
+         <StudentLoginSection/> : <FacultyLoginSection/>}
         </div>
 
     </div>

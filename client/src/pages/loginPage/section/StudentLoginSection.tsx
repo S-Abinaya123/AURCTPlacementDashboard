@@ -32,13 +32,13 @@ const StudentLoginSection: React.FC = () => {
                        text-[#5a3e2b] placeholder-black 
                        focus:outline-none focus:ring-2 focus:ring-[#b77039]"
           />
-          <button
+           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-2 top-3 text-black]"
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button>
+          </button> 
         </div>
 
         {/* Forgot Password */}
