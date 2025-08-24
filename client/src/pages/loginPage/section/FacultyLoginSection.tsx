@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 
-const StudentLoginSection: React.FC = () => {
+const FacultyLoginSection: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
 
   return (
     <div className="flex flex-col md:flex-row bg-white justify-center rounded-2xl shadow-lg w-full max-w-4xl border-2 border-[#8b5e3c] mb-3">
       <div className="mt-3 w-full px-6">
         <p className="text-black text-center font-bold text-3xl mb-6">
-          Student Login
+          Faculty Login
         </p>
 
         {/* Register Number */}
@@ -32,13 +32,13 @@ const StudentLoginSection: React.FC = () => {
                        text-[#5a3e2b] placeholder-black 
                        focus:outline-none focus:ring-2 focus:ring-[#b77039]"
           />
-           <button
+          <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
             className="absolute right-2 top-3 text-black]"
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
-          </button> 
+          </button>
         </div>
 
         {/* Forgot Password */}
@@ -53,19 +53,11 @@ const StudentLoginSection: React.FC = () => {
           Log in
         </button>
 
-        {/* New User Link */}
-        <p className="text-[#5a3e2b] mb-6 text-center">
-          <a
-            href="#"
-            onClick={(e) => e.preventDefault()}
-            className="text-blue-800 underline"
-          >
-            New User?
-          </a>
-        </p>
+      
+        
       </div>
     </div>
   );
 };
 
-export default StudentLoginSection;
+export default FacultyLoginSection;
