@@ -49,7 +49,7 @@ const StudentLoginSection: React.FC = () => {
         </div>
 
         {/* Login Button */}
-        <button className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 text-white hover:bg-[#b77039] transition-colors duration-300">
+        <button className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 cursor-pointer text-white hover:bg-[#b77039] transition-colors duration-300">
           Log in
         </button>
 
