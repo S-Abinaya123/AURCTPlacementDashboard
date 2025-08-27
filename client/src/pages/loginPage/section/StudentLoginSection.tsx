@@ -35,7 +35,7 @@ const StudentLoginSection: React.FC = () => {
            <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="absolute right-2 top-3 text-black]"
+            className="absolute right-2 top-3 text-black cursor-pointer"
           >
             {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button> 
