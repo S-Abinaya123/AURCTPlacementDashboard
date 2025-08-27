@@ -26,6 +26,14 @@ const StudentLoginSection: React.FC = () => {
                        [&::-webkit-outer-spin-button]:appearance-none 
                        [&::-webkit-inner-spin-button]:appearance-none"
           />
+           <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="absolute right-2 top-3 text-black cursor-pointer"
+          >
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </button> 
+        </div>
 
           {/* Password + Eye */}
           <div className="relative mb-1 w-[90%] max-w-md mx-auto">
@@ -52,10 +60,10 @@ const StudentLoginSection: React.FC = () => {
             </a>
           </div>
 
-          {/* Login Button */}
-          <button className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 text-white hover:bg-[#b77039] transition-colors duration-300">
-            Log in
-          </button>
+        {/* Login Button */}
+        <button className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 cursor-pointer text-white hover:bg-[#b77039] transition-colors duration-300">
+          Log in
+        </button>
 
           {/* New User Link */}
           <p className="text-[#5a3e2b] mb-6 text-center">
