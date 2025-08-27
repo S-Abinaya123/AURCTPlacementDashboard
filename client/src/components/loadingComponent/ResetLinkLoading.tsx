@@ -30,7 +30,7 @@ const injectStyles = () => {
   document.head.appendChild(style);
 };
 
-const OTPBox: React.FC = () => {
+const ResetLinkLoading: React.FC = () => {
   const [visibleDominos, setVisibleDominos] = useState<number>(6);
 
   useEffect(() => {
@@ -65,9 +65,10 @@ const OTPBox: React.FC = () => {
   ].slice(0, visibleDominos);
 
   return (
-   <div
-  className="flex items-center justify-center min-h-screen relative 
-  bg-gradient-to-b from-orange-300/80 via-orange-400/80 to-orange-400/80"
+    <div className="bg-black/30 w-[100dvw] h-[100dvh] fixed top-0 left-0">
+
+       <div
+  className="flex items-center justify-center min-h-screen relative "
 >
       {/* Subtle background peach-beige glow */}
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(73, 10, 93, 0.1),transparent_70%)]"></div>
@@ -92,10 +93,10 @@ const OTPBox: React.FC = () => {
   [@media(min-width:351px)_and_(max-width:400px)]:p-5 
   [@media(min-width:401px)_and_(max-width:650px)]:p-6">
           <h1 className="text-lg text-black sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">
-            Sending OTP to your email...
+            Sending Reset Link to your email...
           </h1>
           <p className="text-sm sm:text-base md:text-lg text-orange-900 text-bold font-light">
-            Please wait while we generate your secure OTP.
+            Please wait while we generate your secure Reset Link.
           </p>
 
           {/* Domino Effect Loader */}
@@ -112,7 +113,11 @@ const OTPBox: React.FC = () => {
         </div>
       </div>
     </div>
+
+
+    </div>
+  
   );
 };
 
-export default OTPBox;
+export default ResetLinkLoading;
