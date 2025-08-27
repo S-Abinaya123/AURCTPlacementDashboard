@@ -13,14 +13,15 @@ const FacultyLoginSection: React.FC = () => {
 
         {/* Register Number */}
         <input
-          type="number"
-          placeholder="Register Number"
+          type="tel"
+          placeholder="Mobile Number"
+          pattern="[0-9]{10}"
           className="block mx-auto w-[90%] max-w-md p-2 rounded mb-4 bg-white border border-[#8b5e3c] 
                      text-[#5a3e2b] placeholder-black 
                      focus:outline-none focus:ring-2 focus:ring-[#b77039]
-                     appearance-none 
-                     [&::-webkit-outer-spin-button]:appearance-none 
-                     [&::-webkit-inner-spin-button]:appearance-none"
+                     appearance-none"
+          required 
+                     
         />
 
         {/* Password Field + Eye */}
@@ -49,7 +50,7 @@ const FacultyLoginSection: React.FC = () => {
         </div>
 
         {/* Login Button */}
-        <button className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 text-white hover:bg-[#b77039] transition-colors duration-300">
+        <button className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 cursor-pointer text-white hover:bg-[#b77039] transition-colors duration-300">
           Log in
         </button>
 
