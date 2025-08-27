@@ -4,14 +4,7 @@ import React, { useEffect, useState } from "react";
 const injectStyles = () => {
   const style = document.createElement("style");
   style.innerHTML = `
-    @keyframes glow {
-      0%, 100% { box-shadow: 0 0 70px rgba(240, 142, 22, 0.9); }
-      50% { box-shadow: 0 0 70px rgba(240, 142, 22, 0.9); }
-    }
-    @keyframes lightning-border {
-      0%, 100% { border-color: rgba(196, 93, 38, 0.7); }
-      50% { border-color: rgba(215, 106, 59, 1); }
-    }
+   
     @keyframes domino-effect {
       0% { transform: scale(1); opacity: 0.5; }
       50% { transform: scale(1.3); opacity: 1; }
@@ -70,29 +63,18 @@ const ResetLinkLoading: React.FC = () => {
        <div
   className="flex items-center justify-center min-h-screen relative "
 >
-      {/* Subtle background peach-beige glow */}
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(73, 10, 93, 0.1),transparent_70%)]"></div>
-
+      
       {/* Center Box */}
-      <div
-        className="
-        w-[300px] h-[300px] 
-        sm:w-[300px] sm:h-[300px] 
-        md:w-[450px] md:h-[280px] 
-        lg:w-[500px] lg:h-[320px] 
-        rounded-xl shadow-2xl flex flex-col items-center justify-center 
-        p-4 sm:p-4 md:p-8 text-center text-white space-y-4 
-        animate-[glow_4s_infinite_ease-in-out] extra-padding bg-gray-100 
-      "
-      >
-    <div
-          className="relative z-10 flex flex-col items-center justify-center 
-          w-full h-full border-5 border-orange-400 rounded-xl 
-          p-6 sm:p-6 md:p-8 animate-[lightning-border_4s_infinite_ease-in-out]
-          bg-white [@media(min-width:300px)_and_(max-width:350px)]:p-4 
-  [@media(min-width:351px)_and_(max-width:400px)]:p-5 
-  [@media(min-width:401px)_and_(max-width:650px)]:p-6">
-          <h1 className="text-lg text-black sm:text-xl md:text-2xl lg:text-3xl font-bold tracking-tight">
+         <div
+  className="w-[240px] h-[200px] 
+             sm:w-[270px] sm:h-[260px] 
+             md:w-[340px] md:h-[300px] 
+             lg:w-[380px] lg:h-[320px] 
+             rounded-xl flex flex-col items-center justify-center 
+             p-4 sm:p-6 md:p-8 text-center text-black space-y-2 bg-white extra-padding"
+>
+
+          <h1 className="text-base sm:text-lg md:text-xl lg:text-2xl font-bold tracking-tight mb-5 ">
             Sending Reset Link to your email...
           </h1>
           <p className="text-sm sm:text-base md:text-lg text-orange-900 text-bold font-light">
@@ -111,7 +93,7 @@ const ResetLinkLoading: React.FC = () => {
             ))}
           </div>
         </div>
-      </div>
+      
     </div>
 
 
