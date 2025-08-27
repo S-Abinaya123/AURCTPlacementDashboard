@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import CreateUserPopup from "../../../components/loginPageComponent/CreateUserPopup";
+import ResetPasswordPopup from "../../../components/loginPageComponent/ResetPasswordPopup";
 
 const StudentLoginSection: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isNewUser, setIsNewUser] = useState(false);
+  const [showReset, setShowReset] = useState(false);
 
   return (
     <div className="relative">
@@ -47,9 +49,12 @@ const StudentLoginSection: React.FC = () => {
 
           {/* Forgot Password */}
           <div className="flex justify-end w-[90%] max-w-md mx-auto mb-4">
-            <a href="#" className="text-sm text-blue-800">
+            <button
+              onClick={() => setShowReset(true)}
+              className="text-sm text-blue-800 underline cursor-pointer"
+            >
               Forgot Password?
-            </a>
+            </button>
           </div>
 
           {/* Login Button */}
@@ -69,10 +74,11 @@ const StudentLoginSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Popup */}
-      {isNewUser && (
-        <CreateUserPopup onClose={() => setIsNewUser(false)} />
-      )}
+      {/* Create User Popup */}
+      {isNewUser && <CreateUserPopup onClose={() => setIsNewUser(false)} />}
+
+      {/* Reset Password Popup */}
+      {showReset && <ResetPasswordPopup onClose={() => setShowReset(false)} />}
     </div>
   );
 };
