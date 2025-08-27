@@ -1,17 +1,19 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import ResetPasswordFaculty from "../../../components/loginPageComponent/ResetPasswordFaculty";
 
 const FacultyLoginSection: React.FC = () => {
   const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showReset, setShowReset] = useState<boolean>(false); // ✅ added state for popup
 
   return (
-    <div className="flex flex-col md:flex-row bg-white justify-center rounded-2xl shadow-lg w-full max-w-4xl border-2 border-[#8b5e3c] mb-3">
+    <div className="flex flex-col md:flex-row bg-white justify-center rounded-2xl shadow-lg w-full max-w-4xl border-2 border-[#8b5e3c] mb-3 relative">
       <div className="mt-3 w-full px-6">
         <p className="text-black text-center font-bold text-3xl mb-6">
           Faculty Login
         </p>
 
-        {/* Register Number */}
+        {/* Mobile Number */}
         <input
           type="tel"
           placeholder="Mobile Number"
@@ -20,8 +22,7 @@ const FacultyLoginSection: React.FC = () => {
                      text-[#5a3e2b] placeholder-black 
                      focus:outline-none focus:ring-2 focus:ring-[#b77039]
                      appearance-none"
-          required 
-                     
+          required
         />
 
         {/* Password Field + Eye */}
@@ -44,9 +45,12 @@ const FacultyLoginSection: React.FC = () => {
 
         {/* Forgot Password */}
         <div className="flex justify-end w-[90%] max-w-md mx-auto mb-4">
-          <a href="#" className="text-sm text-blue-800">
+          <button
+            onClick={() => setShowReset(true)}
+            className="text-sm text-blue-800 underline cursor-pointer"
+          >
             Forgot Password?
-          </a>
+          </button>
         </div>
 
         {/* Login Button */}
@@ -54,8 +58,8 @@ const FacultyLoginSection: React.FC = () => {
           Log in
         </button>
 
-      
-        
+        {/* Popup */}
+        {showReset && <ResetPasswordFaculty onClose={() => setShowReset(false)} />}
       </div>
     </div>
   );
