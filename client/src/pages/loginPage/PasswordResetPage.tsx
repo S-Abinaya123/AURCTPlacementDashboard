@@ -1,4 +1,5 @@
 import { useState } from "react";
+import collegeLogo from '../../assets/mainImage/college-logo.jpeg'
 
 export default function ResetPassword() {
   const [showPassword, setShowPassword] = useState({
@@ -17,7 +18,7 @@ export default function ResetPassword() {
 
       <div className="relative w-[400px] p-10 bg-white/10 rounded-2xl backdrop-blur-[15px] shadow-[0_8px_32px_rgba(0,0,0,0.4)] text-white text-center z-10 animate-[fadeIn_0.8s_ease]">
         <img
-          src="AURCTPlacementDashboard/client/src/assets/mainImage/college-logo.jpeg"
+          src={collegeLogo}
           alt="logo"
           className="w-[70px] h-[70px] rounded-[15px] mb-4 shadow-[0_4px_12px_rgba(0,0,0,0.4)] mx-auto"
         />
