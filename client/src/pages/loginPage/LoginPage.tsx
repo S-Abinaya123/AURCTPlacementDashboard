@@ -33,11 +33,11 @@ return (
         </div>
         <div className="w-full md:w-1/2 p-8 text-[#5a3e2b] flex flex-col bg-white rounded-2xl">
           <div className="grid grid-cols-2 gap-4 text-2l font-bold mb-5">
-            <button className={`py-2 px-4 rounded-xl hover:bg-[#8b4513] transition-colors duration-300 ${
+            <button className={`py-2 px-4 rounded-xl cursor-pointer hover:bg-[#8b4513] transition-colors duration-300 ${
               activeTab === "Student" ? "bg-[#b77039] text-white":"bg-gray-200 text-[#5a3e2b]"}`}
               onClick={()=> setActiveTab("Student")}
             >Student</button>
-            <button className={`py-2 px-4 rounded-xl hover:bg-[#8b4513] transition-colors duration-300 ${
+            <button className={`py-2 px-4 rounded-xl cursor-pointer hover:bg-[#8b4513] transition-colors duration-300 ${
               activeTab === "Faculty" ? "bg-[#b77039] text-white" : "bg-gray-200 text-[#5a3e2b]"}`}
               onClick={()=>setActiveTab("Faculty")}
             >Faculty</button>
