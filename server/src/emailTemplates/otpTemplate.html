@@ -2,126 +2,138 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <title>Placement OTP</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    /* Force mobile responsiveness */
-    @media screen and (max-width: 600px) {
-      .container {
-        width: 100% !important;
-        border-radius: 0 !important;
-      }
-      .otp-box {
-        font-size: 24px !important;
-        letter-spacing: 4px !important;
-        padding: 12px 16px !important;
-      }
-      .header-text {
-        font-size: 14px !important;
-      }
-      .body-text {
-        font-size: 14px !important;
-      }
-    }
-  </style>
+	<meta charset="UTF-8">
+	<title>Placement OTP</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style>
+		/* Force mobile responsiveness */
+		@media screen and (max-width: 600px) {
+			.container {
+				width: 100% !important;
+				border-radius: 0 !important;
+			}
+
+			.otp-box {
+				font-size: 24px !important;
+				letter-spacing: 4px !important;
+				padding: 12px 16px !important;
+			}
+
+			.header-text {
+				font-size: 14px !important;
+			}
+
+			.body-text {
+				font-size: 14px !important;
+			}
+		}
+	</style>
 </head>
 
 <body style="margin:0; padding:0; background-color:#f9f9f9; font-family:'Segoe UI', Arial, sans-serif;">
 
-  <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
-    <tr>
-      <td align="center" style="padding:30px 10px;">
-        
-        <!-- Main Container -->
-        <table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500"
-          class="container"
-          style="width:500px; max-width:100%; background-color:#ffffff; border:1px solid #e0e0e0; border-radius:12px;">
-          
-          <!-- Header -->
-          <tr>
-            <td bgcolor="#b77039" style="padding:12px 20px; color:#ffffff; font-size:14px; font-weight:600;">
-              <table width="100%" border="0" cellspacing="0" cellpadding="0">
-                <tr>
-                  <td align="left" valign="middle">
-                    <img src="https://res.cloudinary.com/ds8gjxhda/image/upload/v1755933390/college-logo_ncv3ss.jpg"
-                      width="42" style="border-radius:6px; vertical-align:middle;" alt="Logo">
-                    <span class="header-text" style="font-size:16px; font-weight:600; margin-left:8px; vertical-align:middle;">
-                      Placement Portal
-                    </span>
-                  </td>
-                  <td align="right" valign="middle" style="font-size:13px; opacity:0.9;">
-                    {{date}}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+	<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="100%">
+		<tr>
+			<td align="center" style="padding:30px 10px;">
 
-          <!-- Body -->
-          <tr>
-            <td align="center" style="padding:28px 25px;">
-              <div style="font-size:20px; font-weight:600; color:#333333; margin-bottom:12px;">Your OTP Code</div>
-              <p class="body-text" style="font-size:16px; color:#555555; margin:6px 0;"> 
-                <strong>Hello {{name}} ({{registerNo}}),</strong>
-              </p>
-              <p class="body-text" style="font-size:15px; color:#555555; margin:12px 0; line-height:1.5;">
-                Thank you for using <b>Placement Portal</b>.<br>
-                Use the OTP below to complete your signup.<br>
-                <b>This OTP is valid for 5 minutes.</b><br>
-                Please do not share it with anyone.
-              </p>
+				<!-- Main Container -->
+				<table role="presentation" border="0" cellpadding="0" cellspacing="0" width="500" class="container"
+					style="width:500px; max-width:100%; background-color:#ffffff; border:1px solid #e0e0e0; border-radius:12px;">
 
-              <!-- OTP Box -->
-              <table border="0" cellpadding="0" cellspacing="0" align="center" style="margin:24px auto;">
-                <tr>
-                  <td class="otp-box"
-                    style="font-size:32px; font-weight:bold; color:#b77039; letter-spacing:6px; padding:14px 24px; border:1px dashed #b77039; border-radius:8px; background:#fffaf0; text-align:center;">
-                    {{otp}}
-                  </td>
-                </tr>
-              </table>
+					<!-- Header -->
+					<tr>
+						<td bgcolor="#b77039"
+							style="padding:12px 20px; color:#ffffff; font-size:14px; font-weight:600;">
+							<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<td align="left" valign="middle">
+										<img src="https://res.cloudinary.com/ds8gjxhda/image/upload/v1755933390/college-logo_ncv3ss.jpg"
+											width="42" style="border-radius:6px; vertical-align:middle;" alt="Logo">
+										<span class="header-text"
+											style="font-size:16px; font-weight:600; margin-left:8px; vertical-align:middle;">
+											Placement Portal
+										</span>
+									</td>
+									<td align="right" valign="middle" style="font-size:13px; opacity:0.9;">
+										{{date}}
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
 
-              <p style="font-size:15px; color:#555555; margin-top:15px;"><b>Thank you.</b></p>
-            </td>
-          </tr>
+					<!-- Body -->
+					<tr>
+						<td align="center" style="padding:28px 25px;">
+							<div style="font-size:20px; font-weight:600; color:#333333; margin-bottom:12px;">Your OTP
+								Code</div>
+							<p class="body-text" style="font-size:16px; color:#555555; margin:6px 0;">
+								<strong>Hello {{name}} ({{registerNo}}),</strong>
+							</p>
+							<p class="body-text" style="font-size:15px; color:#555555; margin:12px 0; line-height:1.5;">
+								Thank you for using <b>Placement Portal</b>.<br>
+								Use the OTP below to complete your signup.<br>
+								<b>This OTP is valid for 5 minutes.</b><br>
+								Please do not share it with anyone.
+							</p>
 
-          <!-- Help Section -->
-          <tr>
-            <td style="border-top:1px solid #eeeeee; padding:18px 22px; font-size:14px; color:#555555;">
-              <table border="0" cellpadding="0" cellspacing="0">
-                <tr>
-                  <td valign="middle" style="padding-right:8px;">
-                    <img src="https://res.cloudinary.com/ds8gjxhda/image/upload/v1755934010/IMG-20250823-WA0007_joo9sq.jpg" width="20" height="20" alt="Help">
-                  </td>
-                  <td valign="middle" style="font-weight:600;">Need Help?</td>
-                </tr>
-              </table>
-              <p style="margin:8px 0 6px 30px;">Email us at <a href="mailto:support@placementportal.com" style="color:#155dfc; text-decoration:none;">support@placementportal.com</a></p>
-              <p style="margin:0 0 4px 30px;">Visit <a href="#" style="color:#155dfc; text-decoration:none;">placementportal.com/faq</a></p>
-            </td>
-          </tr>
+							<!-- OTP Box -->
+							<table border="0" cellpadding="0" cellspacing="0" align="center" style="margin:24px auto;">
+								<tr>
+									<td class="otp-box"
+										style="font-size:32px; font-weight:bold; color:#b77039; letter-spacing:6px; padding:14px 24px; border:1px dashed #b77039; border-radius:8px; background:#fffaf0; text-align:center;">
+										{{otp}}
+									</td>
+								</tr>
+							</table>
 
-          <!-- Footer -->
-          <tr>
-            <td align="center" style="padding:16px; background:#f9f9f9; font-size:13px; color:#666666;">
-              <b>Placement Portal</b>
-              <div style="margin-top:8px;">
-                <a href="https://www.linkedin.com/school/university-departments-of-anna-university-of-technology-tirunelveli/" target="_blank">
-                  <img src="https://res.cloudinary.com/ds8gjxhda/image/upload/v1755934010/IMG-20250823-WA0006_jowdz1.jpg" width="22" style="margin:0 6px;" alt="LinkedIn">
-                </a>
-                <a href="https://auttvl.ac.in" target="_blank">
-                  <img src="https://res.cloudinary.com/ds8gjxhda/image/upload/v1755934011/IMG-20250823-WA0005_deutnn.jpg" width="22" style="margin:0 6px;" alt="Website">
-                </a>
-              </div>
-              <div style="margin-top:6px;">© {{year}} Placement Portal. All rights reserved.</div>
-            </td>
-          </tr>
+							<p style="font-size:15px; color:#555555; margin-top:15px;"><b>Thank you.</b></p>
+						</td>
+					</tr>
 
-        </table>
-      </td>
-    </tr>
-  </table>
+					<!-- Help Section -->
+					<tr>
+						<td style="border-top:1px solid #eeeeee; padding:18px 22px; font-size:14px; color:#555555;">
+							<table border="0" cellpadding="0" cellspacing="0">
+								<tr>
+									<td valign="middle" style="padding-right:8px;">
+										<img src="https://res.cloudinary.com/ds8gjxhda/image/upload/v1755934010/IMG-20250823-WA0007_joo9sq.jpg"
+											width="20" height="20" alt="Help">
+									</td>
+									<td valign="middle" style="font-weight:600;">Need Help?</td>
+								</tr>
+							</table>
+							<p style="margin:8px 0 6px 30px;">Email us at <a href="mailto:support@placementportal.com"
+									style="color:#155dfc; text-decoration:none;">support@placementportal.com</a></p>
+							<p style="margin:0 0 4px 30px;">Visit <a href="#"
+									style="color:#155dfc; text-decoration:none;">placementportal.com/faq</a></p>
+						</td>
+					</tr>
+
+					<!-- Footer -->
+					<tr>
+						<td align="center" style="padding:16px; background:#f9f9f9; font-size:13px; color:#666666;">
+							<b>Placement Portal</b>
+							<div style="margin-top:8px;">
+								<a href="https://www.linkedin.com/school/university-departments-of-anna-university-of-technology-tirunelveli/"
+									target="_blank">
+									<img src="https://res.cloudinary.com/ds8gjxhda/image/upload/v1755934010/IMG-20250823-WA0006_jowdz1.jpg"
+										width="22" style="margin:0 6px;" alt="LinkedIn">
+								</a>
+								<a href="https://auttvl.ac.in" target="_blank">
+									<img src="https://res.cloudinary.com/ds8gjxhda/image/upload/v1755934011/IMG-20250823-WA0005_deutnn.jpg"
+										width="22" style="margin:0 6px;" alt="Website">
+								</a>
+							</div>
+							<div style="margin-top:6px;">© {{year}} Placement Portal. All rights reserved.</div>
+						</td>
+					</tr>
+
+				</table>
+			</td>
+		</tr>
+	</table>
 
 </body>
+
 </html>
