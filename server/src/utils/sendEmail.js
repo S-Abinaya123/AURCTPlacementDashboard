@@ -22,9 +22,16 @@ const resetTemplatePath = path.join(
   "emailTemplates",
   "resetPasswordTemplate.html"
 );
+const welcomeTemplatePath = path.join(
+  __dirname,
+  "..",
+  "emailTemplates",
+  "accountCreationTemplate.html"
+);
 
 let otpTemplateHtml = "";
 let resetTemplateHtml = "";
+let welcomeTemplateHtml = "";
 
 try {
   otpTemplateHtml = fs.readFileSync(otpTemplatePath, "utf8");
@@ -38,6 +45,13 @@ try {
 } catch (error) {
   console.error("Failed to read Reset Password template:", error.message);
   resetTemplateHtml = `<p>Hello {{name}},</p><p>Click here to reset: <a href="{{resetLink}}">Reset Password</a></p>`;
+}
+
+try {
+  welcomeTemplateHtml = fs.readFileSync(welcomeTemplatePath, "utf8");
+} catch (error) {
+  console.error("Failed to read Welcome template:", error.message);
+  welcomeTemplateHtml = `<p>Hello {{name}},</p><p>Welcome to the Placement Portal 🎉</p>`;
 }
 
 const transporter = nodemailer.createTransport({
@@ -136,9 +150,40 @@ export const sendPasswordResetEmail = async ({
   }
 };
 
-await sendPasswordResetEmail({
-    to:"applejack36910@gmail.com",
-    name:"Noorjahan",
-    registerNo:"950023104014",
-    resetLink:"#"
-})
+export const sendWelcomeEmail = async ({ to, name }) => {
+  try {
+	const today = new Date();
+    const formattedDate = today.toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+    });
+    const placeholders = {
+      name,
+	  date: formattedDate,
+      year: new Date().getFullYear(),
+    };
+
+    let finalHtml = welcomeTemplateHtml;
+    for (const key in placeholders) {
+      finalHtml = finalHtml.replace(
+        new RegExp(`{{${key}}}`, "g"),
+        placeholders[key]
+      );
+    }
+
+    const mailOptions = {
+      from: `"Placement Portal" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: "Welcome to AURCT Placement Portal",
+      html: finalHtml,
+    };
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Welcome email sent:", info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending welcome email:", error.message);
+    return { success: false, error: error.message };
+  }
+};
