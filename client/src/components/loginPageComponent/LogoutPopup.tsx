@@ -1,7 +1,7 @@
 
 const LogoutPopup = () => {
   return (
-    <div className="fixed inset-0 bg-[rgb(131,133,136)] flex justify-center items-center animate-fadeIn">
+    <div className="fixed inset-0 bg-black/30 flex justify-center items-center animate-fadeIn">
       <div className="w-[440px] bg-white p-[25px_30px_30px] rounded-[16px] shadow-[0_12px_35px_rgba(0,0,0,0.18)] relative animate-slideUp">
         <button className="absolute top-[12px] right-[15px] text-[20px] text-[#777] cursor-pointer transition duration-200 border-none bg-none hover:text-[#222]">
           &times;
