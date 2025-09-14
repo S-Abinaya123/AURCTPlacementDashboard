@@ -1,8 +1,11 @@
+import TopicPage from "./pages/loginPage/mcqPage/TopicPage"
 
 function App() {
 
     return (
-        <div>AURCT Placement</div>
+        <div>
+            <TopicPage />
+        </div>
     )
 }
 
