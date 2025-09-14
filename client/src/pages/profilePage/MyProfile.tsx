@@ -1,11 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, type ChangeEvent } from 'react';
+
+
+// Define a type for the profile data object
+interface ProfileData {
+    fullName: string;
+    email: string;
+    Department: string;
+    Year: string;
+    Semester: string;
+    RegisterNum: string;
+}
+
+// Define a type for the language status objects
+interface LanguageStatus {
+    name: string;
+    progress: number;
+    color: string;
+}
+
+// Define a type for the social links objects
+interface SocialLink {
+    name: string;
+    url: string;
+    icon: React.ReactNode;
+}
+
 
 const MyProfile = () => {
-    // State to manage the profile image, defaulting to a placeholder
-    const [profileImage, setProfileImage] = useState(null);
+    const [profileImage, setProfileImage] = useState<string | null>(null);
 
-    // Mock data for the profile and form
-    const [profileData, setProfileData] = useState({
+    const [profileData, setProfileData] = useState<ProfileData>({
         fullName: 'Mathimalar',
         email: 'mathimalar0505@gmail.com',
         Department: 'Computer Science and Engineering',
@@ -14,19 +38,19 @@ const MyProfile = () => {
         RegisterNum: '950023104031',
     });
 
-    const [languageStatus, setlanguageStatus] = useState([
+    // The 'setlanguageStatus' setter is not used, so we remove it from destructuring.
+    const [languageStatus] = useState<LanguageStatus[]>([
         { name: 'Aptitude', progress: 80, color: 'bg-blue-500' },
         { name: 'Java', progress: 70, color: 'bg-red-500' },
         { name: 'Python', progress: 90, color: 'bg-green-500' },
         { name: 'C', progress: 65, color: 'bg-yellow-500' },
         { name: 'C++', progress: 85, color: 'bg-blue-500' },
     ]);
-    
-    // State to manage social links and their editability
-    const [socialLinks, setSocialLinks] = useState([
+
+    const [socialLinks, setSocialLinks] = useState<SocialLink[]>([
         {
-            name: 'LinkedIn', 
-            url: 'https://www.linkedin.com/in/mathimalar-a-891687337/', 
+            name: 'LinkedIn',
+            url: 'https://www.linkedin.com/in/mathimalar-a-891687337/',
             icon: (
                 <div className="bg-blue-700 text-white p-3 rounded-full shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
@@ -35,23 +59,23 @@ const MyProfile = () => {
                         <circle cx="4" cy="4" r="2" />
                     </svg>
                 </div>
-            )
+            ),
         },
         {
-            name: 'Github', 
-            url: 'https://github.com/Mathimalar190505', 
+            name: 'Github',
+            url: 'https://github.com/Mathimalar190505',
             icon: (
                 <div className="bg-gray-800 text-white p-3 rounded-full shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
-                        <path d="M15 22s-3.5 0-5-1c-1-1-4 0-4-1s2-2 2-3c0-2-3-4-3-6a10 10 0 0110-10c0 0 2 0 4 2s2 2 2 3c0 2-3 4-3 6a5 5 0 01-5 5z"/>
-                        <path d="M9 18a1 1 0 01-1-1c0-1 1-1 1-1s1-1 1-2c0-1-1-1-1-1a2 2 0 01-2-2"/>
+                        <path d="M15 22s-3.5 0-5-1c-1-1-4 0-4-1s2-2 2-3c0-2-3-4-3-6a10 10 0 0110-10c0 0 2 0 4 2s2 2 2 3c0 2-3 4-3 6a5 5 0 01-5 5z" />
+                        <path d="M9 18a1 1 0 01-1-1c0-1 1-1 1-1s1-1 1-2c0-1-1-1-1-1a2 2 0 01-2-2" />
                     </svg>
                 </div>
-            )
+            ),
         },
         {
-            name: 'LeetCode', 
-            url: 'https://leetcode.com/u/Mathimalar_19/', 
+            name: 'LeetCode',
+            url: 'https://leetcode.com/u/Mathimalar_19/',
             icon: (
                 <div className="bg-green-600 text-white p-3 rounded-full shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
@@ -63,11 +87,11 @@ const MyProfile = () => {
                         <path d="M17 5v14" />
                     </svg>
                 </div>
-            )
+            ),
         },
         {
-            name: 'Autocad', 
-            url: 'https://autocad.autodesk.com/profile', 
+            name: 'Autocad',
+            url: 'https://autocad.autodesk.com/profile',
             icon: (
                 <div className="bg-orange-600 text-white p-3 rounded-full shadow-md">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
@@ -77,36 +101,34 @@ const MyProfile = () => {
                         <circle cx="12" cy="12" r="5" />
                     </svg>
                 </div>
-            )
+            ),
         },
     ]);
 
-    // New state to manage form editability
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isEditingSocial, setIsEditingSocial] = useState(false);
 
-    const handleChange = (e) => {
+    const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setProfileData(prevState => ({
             ...prevState,
             [name]: value,
         }));
     };
-    
-    const handleSocialChange = (index, e) => {
+
+    const handleSocialChange = (index: number, e: ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target;
         const newLinks = [...socialLinks];
         newLinks[index].url = value;
         setSocialLinks(newLinks);
     };
 
-    // Handler for the image file input
-    const handleImageChange = (e) => {
+    const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             const file = e.target.files[0];
             const reader = new FileReader();
             reader.onload = (event) => {
-                setProfileImage(event.target.result);
+                setProfileImage(event.target?.result as string);
             };
             reader.readAsDataURL(file);
         }
@@ -124,45 +146,41 @@ const MyProfile = () => {
     const handleCancelProfile = () => {
         setIsEditingProfile(false);
     };
-    
+
     const handleSaveSocial = () => {
         console.log('Social links saved:', socialLinks);
         setIsEditingSocial(false);
     };
-    
+
     const handleEditSocial = () => {
         setIsEditingSocial(true);
     };
-    
+
     const handleCancelSocial = () => {
-        // Reset to original values if needed, for now just exit edit mode
         setIsEditingSocial(false);
-    }
+    };
 
     return (
         <div className="bg-gray-200 min-h-screen p-4 sm:p-8 md:p-12 font-sans">
             <div className="container mx-auto">
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Profile Card Section */}
                     <div className="lg:col-span-1">
                         <div className="bg-white rounded-2xl shadow-xl p-8 flex flex-col items-center text-center transition-all duration-300 transform hover:scale-[1.01] border border-gray-200">
-                            {/* Image with upload functionality */}
                             <div className="relative w-28 h-28 mb-4">
                                 <img
                                     src={profileImage || "https://placehold.co/150x150/E2E8F0/1A202C?text=M"}
                                     alt="User"
                                     className="rounded-full w-28 h-28 object-cover border-4 border-gray-200 shadow-md transition-all duration-300"
                                 />
-                                {/* Hidden file input to trigger camera/gallery */}
                                 <input
                                     type="file"
                                     id="profile-image-input"
                                     className="hidden"
                                     accept="image/*"
                                     onChange={handleImageChange}
-                                    capture="camera"
+                                    capture="environment"
                                 />
-                                {/* Label to act as the clickable button */}
+
                                 <label
                                     htmlFor="profile-image-input"
                                     className="absolute bottom-0 right-0 p-1.5 bg-blue-500 text-white rounded-full cursor-pointer hover:bg-blue-600 transition-colors duration-200 shadow-md transform hover:scale-110"
@@ -173,7 +191,6 @@ const MyProfile = () => {
                                     </svg>
                                 </label>
                             </div>
-                            
                             <h4 className="text-xl font-semibold text-gray-800">{profileData.fullName}</h4>
                             <p className="text-gray-500 text-sm">{profileData.RegisterNum}</p>
                             <div className="mt-4 flex space-x-2">
@@ -182,8 +199,6 @@ const MyProfile = () => {
                                 </button>
                             </div>
                         </div>
-
-                        {/* Social Links Section */}
                         <div className="bg-white rounded-xl shadow-lg mt-8 p-6 transition-all duration-300 transform hover:scale-[1.01] border border-gray-200">
                             <div className="flex justify-between items-center mb-4">
                                 <h5 className="text-xl font-semibold text-gray-800">Social Links</h5>
@@ -227,10 +242,7 @@ const MyProfile = () => {
                             </div>
                         </div>
                     </div>
-
-                    {/* Main Content Section */}
                     <div className="lg:col-span-2 space-y-8">
-                        {/* Profile Form Section */}
                         <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 transform hover:scale-[1.01] border border-gray-200">
                             <div className="flex justify-between items-center mb-6">
                                 <h5 className="text-xl font-semibold text-gray-800">Profile Settings</h5>
@@ -287,7 +299,6 @@ const MyProfile = () => {
                                             className="border border-gray-300 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:bg-gray-100"
                                         />
                                     </div>
-
                                     <div className="flex flex-col">
                                         <label htmlFor="year" className="text-gray-600 font-medium text-sm mb-1">Year</label>
                                         <input
@@ -327,8 +338,6 @@ const MyProfile = () => {
                                 </div>
                             </form>
                         </div>
-
-                        {/* Project Status Section */}
                         <div className="bg-white rounded-xl shadow-lg p-6 transition-all duration-300 transform hover:scale-[1.01] border border-gray-200">
                             <h5 className="text-xl font-semibold text-gray-800 mb-6">Coding Progress</h5>
                             <div className="space-y-4">
