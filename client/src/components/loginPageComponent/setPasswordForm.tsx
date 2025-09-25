@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
-const SetPasswordModal = ({ isOpen, onClose }) => {
-  const [password, setPassword] = useState<string>('');
-  const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [error, setError] = useState<string>('');
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+interface SetPasswordModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+const SetPasswordModal = ({ isOpen, onClose }: SetPasswordModalProps) => {
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [error, setError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const validatePassword = (pw: string) => {
     if (pw.length < 8) {
@@ -33,7 +38,7 @@ const SetPasswordModal = ({ isOpen, onClose }) => {
       return;
     }
 
-   alert("Password set successfully!");
+    alert("Password set successfully!");
     setError('');
     onClose();
   };
@@ -43,7 +48,7 @@ const SetPasswordModal = ({ isOpen, onClose }) => {
   }
 
   return (
-    <div className="fixed inset-0 bg-gray-300 bg-opacity-60 overflow-y-auto h-full w-full flex items-center justify-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-30 overflow-y-auto h-full w-full flex items-center justify-center z-50">
       <div className="relative bg-white rounded-xl shadow-lg p-8 w-full max-w-md mx-auto transition-all duration-300 hover:shadow-xl">
         <button
           onClick={onClose}
@@ -150,7 +155,7 @@ const SetPasswordModal = ({ isOpen, onClose }) => {
 };
 
 const SetPasswordForm = () => {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(true);
+  const [isModalOpen, setIsModalOpen] = useState(true);
   return (
     <div className="min-h-screen bg-slate-100 p-8 flex flex-col items-center justify-center">
       <SetPasswordModal
