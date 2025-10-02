@@ -3,12 +3,13 @@ import StudentLoginSection from "./section/StudentLoginSection";
 import FacultyLoginSection from "./section/FacultyLoginSection";
 import collegeLogo from "../../assets/mainImage/college-logo.jpeg"
 
-
+import SetPasswordForm from "../../components/loginPageComponent/SetPasswordForm";
 
 const LoginPage: React.FC = () => {
   const[activeTab,setActiveTab] = useState<"Student"|"Faculty">("Student");
 return (
     <div className="min-h-screen flex items-center justify-center bg-white p-4 font-sans">
+      <SetPasswordForm />
       <div className="flex flex-col md:flex-row bg-[#fffaf0] rounded-2xl shadow-lg w-full max-w-4xl border-2 border-[#8b5e3c]">
 
         <div className=" md:flex w-full md:w-1/2 p-8 bg-[#8b5e3c] items-center justify-center rounded-xl text-white">
