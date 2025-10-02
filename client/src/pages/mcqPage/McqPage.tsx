@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import RightSidebar from '../../components/mcqPageComponents/RightSidebar';
+import RightSidebar from '../../components/mcqPageComponent/RightSidebar';
 
 // NOTE: RightSidebar component is not included in this single file.
 // Please ensure you have this component separately or integrate its logic here.

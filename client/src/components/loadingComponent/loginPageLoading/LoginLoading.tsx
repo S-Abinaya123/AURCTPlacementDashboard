@@ -3,7 +3,7 @@ import './loginLoading.css'
 
 const LoginLoading = () => {
     return (
-        <div className='outer-container'>
+        <div className='outer-container z-50'>
             <div className="wrapper">
                 <div className="box-wrap">
                     <div className="box one"></div>
