@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import collegeLogo from '../../assets/mainImage/college-logo.jpeg'
 
-export default function ResetPassword() {
+export default function PasswordResetPage() {
   const [showPassword, setShowPassword] = useState({
     new: false,
     confirm: false,
@@ -102,12 +103,11 @@ export default function ResetPassword() {
 
         <p className="mt-5 text-[13px] text-[#ccc]">
           Remembered your password?{" "}
-          <a
-            href="#"
+          <Link to={'/auth'}
             className="text-[#00c6ff] font-semibold hover:underline"
           >
             Login here
-          </a>
+          </Link>
         </p>
       </div>
 

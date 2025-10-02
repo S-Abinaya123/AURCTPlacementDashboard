@@ -58,7 +58,7 @@ const ResetLinkLoading: React.FC = () => {
   ].slice(0, visibleDominos);
 
   return (
-    <div className="bg-black/30 w-[100dvw] h-[100dvh] fixed top-0 left-0">
+    <div className="bg-black/30 w-[100dvw] h-[100dvh] fixed top-0 left-0 z-50">
 
        <div
   className="flex items-center justify-center min-h-screen relative "

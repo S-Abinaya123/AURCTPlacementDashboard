@@ -1,4 +1,5 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 import {
   FaHome,
   FaQuestionCircle,
@@ -10,28 +11,32 @@ import {
   FaPowerOff,
 } from "react-icons/fa";
 
-// ✅ Reusable NavLink Component
-const NavLink = ({
+// ✅ Reusable Sidebar Link Component
+const SideLink = ({
   icon,
+  to,
   children,
-  href = "#",
 }: {
   icon: React.ReactNode;
+  to: string;
   children: React.ReactNode;
-  href?: string;
 }) => (
-  <a
-    href={href}
-    className="flex items-center gap-2 px-3 py-2 font-bold text-black rounded-lg border-b-2 border-white hover:bg-[#e4ac74] transition-colors"
+  <NavLink
+    to={to}
+    className={({ isActive }) =>
+      `flex items-center gap-2 px-3 py-2 font-bold rounded-lg border-b-2 border-white transition-colors
+       ${isActive ? "bg-[#e4ac74] text-black" : "text-black hover:bg-[#e4ac74]"}`
+    }
   >
     {icon}
     {children}
-  </a>
+  </NavLink>
 );
 
 export default function Sidebar() {
   return (
-    <aside className="w-56  bg-orange-200/80 text-black flex flex-col justify-between">
+    <aside className="fixed left-0 top-0 h-screen w-56 bg-orange-200/80 text-black flex flex-col justify-between overflow-y-auto">
+      {/* Top Section */}
       <div>
         {/* Profile Section */}
         <div className="text-center p-4 border-b border-white/30">
@@ -48,33 +53,26 @@ export default function Sidebar() {
           </button>
         </div>
 
-        {/* Links */}
+        {/* Nav Links */}
         <div className="p-3 space-y-1">
-          <NavLink icon={<FaHome />}>Home</NavLink>
-          <NavLink icon={<FaQuestionCircle />}>Quiz</NavLink>
-          <NavLink icon={<FaBook />}>Resources</NavLink>
-          <NavLink icon={<FaBriefcase />}>Job Post</NavLink>
-          <NavLink icon={<FaCalendar />}>Calendar</NavLink>
-          <NavLink icon={<FaGraduationCap />}>Placement</NavLink>
+          <SideLink to="/" icon={<FaHome />}>Home</SideLink>
+          <SideLink to="/topics" icon={<FaQuestionCircle />}>MCQ</SideLink>
+          <SideLink to="/resources" icon={<FaBook />}>Resources</SideLink>
+          <SideLink to="/job-post" icon={<FaBriefcase />}>Job Post</SideLink>
+          <SideLink to="/calendar" icon={<FaCalendar />}>Calendar</SideLink>
+          <SideLink to="/placement" icon={<FaGraduationCap />}>Placement</SideLink>
         </div>
       </div>
 
-      {/* Bottom Links */}
-      <div className="p-4 space-y-2">
-        <a
-          href="#"
-          className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#e4ac74] transition-colors"
-        >
-          <FaCog />
+      {/* Bottom Section */}
+      <div className="p-4 space-y-2 border-t border-white/30">
+        <SideLink to="/settings" icon={<FaCog />}>
           Settings
-        </a>
-        <a
-          href="#"
-          className="flex items-center gap-2 px-3 py-2 font-bold rounded-lg text-red-600 hover:bg-red-100 transition-colors"
-        >
+        </SideLink>
+        <button className="w-full flex items-center gap-2 px-3 py-2 font-bold rounded-lg text-red-600 hover:bg-red-100 transition-colors">
           <FaPowerOff />
           Logout
-        </a>
+        </button>
       </div>
     </aside>
   );

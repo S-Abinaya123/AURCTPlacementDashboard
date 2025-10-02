@@ -1,20 +1,20 @@
-import React from "react";
+// MainLayout.tsx
+import { Outlet } from "react-router-dom";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
 export default function MainLayout() {
   return (
-    <div
-      style={{
-        display: "flex",
-        minHeight: "100vh",
-        background: "white",
-      }}
-    >
+    <div className="flex min-h-screen bg-white">
+      {/* Sidebar fixed */}
       <Sidebar />
-      <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+
+      {/* Main content shifted right */}
+      <div className="flex-1 flex flex-col ml-56">
         <Header />
-        <main style={{ flex: 1, padding: "20px" }}></main>
+        <main className="flex-1 p-5 bg-gray-50 overflow-y-auto">
+          <Outlet />
+        </main>
       </div>
     </div>
   );
