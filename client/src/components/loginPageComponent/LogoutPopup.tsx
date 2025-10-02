@@ -30,7 +30,7 @@ const LogoutPopup: React.FC<LogoutPopupProps> = ({ onClose }) => {
   return (
     // Fixed overlay...
     <div 
-      className="fixed inset-0 bg-black/30 flex justify-center items-center animate-fadeIn"
+      className="fixed inset-0 bg-black/30 flex justify-center items-center animate-fadeIn z-50"
       onClick={onClose}
     >
       <div 
