@@ -1,5 +1,5 @@
 import { useState } from "react";
-import collegeLogo from '../../assets/mainImage/college-logo.jpeg'
+import collegeLogo from "../../assets/mainImage/college-logo.jpeg";
 
 export default function ResetPassword() {
   const [showPassword, setShowPassword] = useState({
@@ -7,9 +7,64 @@ export default function ResetPassword() {
     confirm: false,
   });
 
+  const [formData, setFormData] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
+
+  const [strengthError, setStrengthError] = useState<string>("");
+  const [mismatchError, setMismatchError] = useState<string>("");
+  const [newPassword, setNewPassword] = useState<string>("");
+  const [confirmPassword, setConfirmPassword] = useState<string>("");
+
+
   const togglePassword = (field: "new" | "confirm") => {
     setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setFormData({ ...formData, [e.target.id]: e.target.value });
+};
+
+
+
+  const isStrongPassword = (password: string) => {
+    const regex =
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    return regex.test(password);
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setStrengthError("");
+    setMismatchError("");
+
+    if (!formData.newPassword ) {
+      setNewPassword("Enter the new password");
+    } else {
+      setNewPassword("");
+    }
+
+    if (!formData.confirmPassword ) {
+      setConfirmPassword("Enter the confirm password");
+    } else {
+      setConfirmPassword("");
+    }
+
+    if (!isStrongPassword(formData.newPassword) && formData.newPassword.length > 0) {
+      setStrengthError(
+        "Use at least 8 characters, including uppercase, lowercase, number, and a special symbol."
+      );
+      return;
+    }
+
+    if (formData.newPassword !== formData.confirmPassword && formData.confirmPassword.length > 0) {
+      setMismatchError("Passwords do not match. Please try again.");
+      return;
+    }
+
+  };
+
 
   return (
     <div className="h-screen w-full flex items-center justify-center bg-gradient-to-br from-[#141e30] to-[#243b55] relative overflow-hidden">
@@ -27,20 +82,26 @@ export default function ResetPassword() {
           Reset your password to continue
         </p>
 
-        <form className="space-y-5">
+        <form className="space-y-5" onSubmit={handleSubmit}>
           <div>
             <label
-              htmlFor="new-password"
+              htmlFor="newPassword"
               className="block text-left mb-1.5 text-[13px] font-semibold text-[#eee]"
             >
               New Password
             </label>
             <div className="relative">
               <input
-                id="new-password"
+                id="newPassword"
                 type={showPassword.new ? "text" : "password"}
+                value={formData.newPassword}
+                onChange={handleChange}
                 placeholder="Enter new password"
-                className="w-full px-3 pr-10 py-3 rounded-lg text-[14px] bg-white/15 text-white backdrop-blur-[5px] outline-none placeholder:text-[#bbb] focus:border focus:border-[#00c6ff] focus:shadow-[0_0_8px_#00c6ff50]"
+                className={`w-full px-3 pr-10 py-3 rounded-lg text-[14px] bg-white/15 text-white backdrop-blur-[5px] outline-none placeholder:text-[#bbb] focus:border ${
+                  strengthError
+                    ? "border-red-400 focus:shadow-[0_0_8px_#ff4d4d80]"
+                    : "focus:border-[#00c6ff] focus:shadow-[0_0_8px_#00c6ff50]"
+                }`}
               />
               <svg
                 onClick={() => togglePassword("new")}
@@ -58,19 +119,32 @@ export default function ResetPassword() {
                 )}
               </svg>
             </div>
+            {strengthError && (
+              <p className="text-red-400 text-xs mt-1 text-left">
+                {strengthError}
+              </p>
+            )}
+            {newPassword && (
+              <p className="text-red-400 text-sm mt-1 flex items-center">
+                <span className="w-4 h-4 flex items-center justify-center border border-red-400 rounded-full mr-2">!</span>
+                {newPassword}
+              </p>
+            )}
           </div>
 
           <div>
             <label
-              htmlFor="confirm-password"
+              htmlFor="confirmPassword"
               className="block text-left mb-1.5 text-[13px] font-semibold text-[#eee]"
             >
               Confirm Password
             </label>
             <div className="relative">
               <input
-                id="confirm-password"
+                id="confirmPassword"
                 type={showPassword.confirm ? "text" : "password"}
+                value={formData.confirmPassword}
+                onChange={handleChange}
                 placeholder="Re-enter password"
                 className="w-full px-3 pr-10 py-3 rounded-lg text-[14px] bg-white/15 text-white backdrop-blur-[5px] outline-none placeholder:text-[#bbb] focus:border focus:border-[#00c6ff] focus:shadow-[0_0_8px_#00c6ff50]"
               />
@@ -91,9 +165,22 @@ export default function ResetPassword() {
               </svg>
             </div>
           </div>
+          {confirmPassword && (
+              <p className="text-red-400 text-sm -mt-4 flex items-center">
+                <span className="w-4 h-4 flex items-center justify-center border border-red-400 rounded-full mr-2">!</span>
+                {confirmPassword}
+              </p>
+          )}
+
+          {mismatchError && (
+            <p className="text-red-400 text-sm text-center -mt-2">
+              {mismatchError}
+            </p>
+          )}
+          
 
           <button
-            type="button"
+            type="submit"
             className="w-full py-3.5 rounded-lg font-semibold text-[15px] bg-gradient-to-br from-[#00c6ff] to-[#0072ff] hover:from-[#0072ff] hover:to-[#004e92] transition transform hover:-translate-y-0.5 shadow-[0_6px_18px_rgba(0,0,0,0.4)]"
           >
             Reset Password
@@ -125,4 +212,4 @@ export default function ResetPassword() {
       </style>
     </div>
   );
-}
+}   
