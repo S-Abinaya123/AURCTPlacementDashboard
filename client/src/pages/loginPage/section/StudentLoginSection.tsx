@@ -8,6 +8,37 @@ const StudentLoginSection: React.FC = () => {
   const [isNewUser, setIsNewUser] = useState(false);
   const [showReset, setShowReset] = useState(false);
 
+  const [registerNumber, setRegisterNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [registerNumberError, setRegisterNumberError] = useState("");
+  const [passwordError, setPasswordError] = useState("");
+
+  // ✅ Validation
+  const handleLogin = () => {
+    let valid = true;
+
+    if (!registerNumber) {
+      setRegisterNumberError("Enter the register number");
+      valid = false;
+    } else if (registerNumber.length !== 12) {
+      setRegisterNumberError("Register Number must be 12 digits");
+      valid = false;
+    } else {
+      setRegisterNumberError("");
+    }
+
+    if (!password) {
+      setPasswordError("Enter the password");
+      valid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (valid) {
+      console.log("Login Success", { registerNumber, password });
+    }
+  };
+
   return (
     <div className="relative">
       {/* Login Box */}
@@ -18,33 +49,56 @@ const StudentLoginSection: React.FC = () => {
           </p>
 
           {/* Register Number */}
-          <input
-            type="number"
-            placeholder="Register Number"
-            className="block mx-auto w-[90%] max-w-md p-2 rounded mb-4 bg-white border border-[#8b5e3c] 
-                       text-[#5a3e2b] placeholder-black 
-                       focus:outline-none focus:ring-2 focus:ring-[#b77039]
-                       appearance-none 
-                       [&::-webkit-outer-spin-button]:appearance-none 
-                       [&::-webkit-inner-spin-button]:appearance-none"
-          />
+          <div className="w-[90%] max-w-md mx-auto mb-3">
+            <input
+              type="number"
+              value={registerNumber}
+              onChange={(e) => setRegisterNumber(e.target.value)}
+              placeholder="Register Number"
+              className={`block w-full p-2 rounded bg-white border ${
+                registerNumberError ? "border-red-500" : "border-[#8b5e3c]"
+              } text-[#5a3e2b] placeholder-black focus:outline-none focus:ring-2 ${
+                registerNumberError
+                  ? "focus:ring-red-500"
+                  : "focus:ring-[#b77039]"
+              }`}
+            />
+            {registerNumberError && (
+              <p className="text-red-600 text-sm mt-1 flex items-center">
+                <span className="w-4 h-4 flex items-center justify-center border border-red-600 rounded-full mr-2">!</span>
+                {registerNumberError}
+              </p>
+            )}
+          </div>
 
           {/* Password + Eye */}
-          <div className="relative mb-1 w-[90%] max-w-md mx-auto">
-            <input
-              type={showPassword ? "text" : "password"}
-              placeholder="Enter your password"
-              className="w-full p-2 rounded bg-white border border-[#8b5e2c] 
-                         text-[#5a3e2b] placeholder-black 
-                         focus:outline-none focus:ring-2 focus:ring-[#b77039]"
-            />
-            <button
-              type="button"
-              onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-2 top-3 cursor-pointer"
-            >
-              {showPassword ? <FaEyeSlash /> : <FaEye />}
-            </button>
+          <div className="w-[90%] max-w-md mx-auto mb-3">
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="Enter your password"
+                className={`w-full p-2 rounded bg-white border ${
+                  passwordError ? "border-red-500" : "border-[#8b5e2c]"
+                } text-[#5a3e2b] placeholder-black focus:outline-none focus:ring-2 ${
+                  passwordError ? "focus:ring-red-500" : "focus:ring-[#b77039]"
+                }`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-2 top-3 cursor-pointer"
+              >
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
+              </button>
+            </div>
+            {passwordError && (
+              <p className="text-red-600 text-sm mt-1 flex items-center">
+                <span className="w-4 h-4 flex items-center justify-center border border-red-600 rounded-full mr-2">!</span>
+                {passwordError}
+              </p>
+            )}
           </div>
 
           {/* Forgot Password */}
@@ -58,7 +112,10 @@ const StudentLoginSection: React.FC = () => {
           </div>
 
           {/* Login Button */}
-          <button className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 cursor-pointer text-white hover:bg-[#b77039] transition-colors duration-300">
+          <button
+            onClick={handleLogin}
+            className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 cursor-pointer text-white hover:bg-[#b77039] transition-colors duration-300"
+          >
             Log in
           </button>
 
