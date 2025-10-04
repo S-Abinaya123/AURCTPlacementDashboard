@@ -1,8 +1,17 @@
+import React from 'react';
 
-export default function EndExamPopup() {
+interface EndExamPopupProps {
+  onClose: () => void;
+  onQuit: () => void;
+}
+
+const EndExamPopup: React.FC<EndExamPopupProps> = ({ onClose, onQuit }) => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black/50">
-      <div className="bg-white w-[420px] rounded-2xl p-6 shadow-xl text-center animate-slideUp">
+    <div
+      className="fixed inset-0 flex items-center justify-center bg-black/50 z-[1000]"
+      // z-[1000] ensures popup is above everything else
+    >
+      <div className="bg-white w-[420px] rounded-2xl p-6 shadow-xl text-center animate-slideUp relative z-[1001]">
         <div className="text-[50px] text-red-600 mb-4">⚠️</div>
         <h2 className="text-[22px] text-[#222] mb-4">
           Are you sure you want to end the exam?
@@ -21,14 +30,21 @@ export default function EndExamPopup() {
         </div>
 
         <div className="flex justify-between mt-5">
-          <button className="cursor-pointer flex-1 mx-2 py-3 rounded-lg font-semibold text-[15px] text-white bg-gradient-to-br from-[#e74c3c] to-[#c0392b] transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-red-400/50">
+          <button
+            onClick={onQuit}
+            className="cursor-pointer flex-1 mx-2 py-3 rounded-lg font-semibold text-[15px] text-white bg-gradient-to-br from-[#e74c3c] to-[#c0392b] transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-red-400/50"
+          >
             Quit Exam
           </button>
-          <button className="cursor-pointer flex-1 mx-2 py-3 rounded-lg font-semibold text-[15px] text-white bg-gradient-to-br from-[#2ecc71] to-[#27ae60] transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-green-400/50">
+          <button
+            onClick={onClose}
+            className="cursor-pointer flex-1 mx-2 py-3 rounded-lg font-semibold text-[15px] text-white bg-gradient-to-br from-[#2ecc71] to-[#27ae60] transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg hover:shadow-green-400/50"
+          >
             Continue Exam
           </button>
         </div>
       </div>
+
       <style>
         {`
           @keyframes slideUp {
@@ -42,4 +58,6 @@ export default function EndExamPopup() {
       </style>
     </div>
   );
-}
+};
+
+export default EndExamPopup;

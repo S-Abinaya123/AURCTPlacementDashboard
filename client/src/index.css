@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities; */
+
+
 input[type="password"]::-ms-reveal,
 input[type="password"]::-ms-clear {
   display: none;
@@ -12,4 +17,12 @@ input[type="password"]::-webkit-credentials-auto-fill-button {
 }
 
 
+/* styles.css or a global CSS file */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}

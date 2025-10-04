@@ -4,7 +4,6 @@ import FacultyLoginSection from "./section/FacultyLoginSection";
 import collegeLogo from "../../assets/mainImage/college-logo.jpeg"
 
 
-
 const LoginPage: React.FC = () => {
   const[activeTab,setActiveTab] = useState<"Student"|"Faculty">("Student");
 return (

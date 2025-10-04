@@ -15,7 +15,7 @@ const AccountLoading: React.FC = () => {
         `}
       </style>
 
-      <div className="fixed inset-0 bg-gray-500/30 flex items-center justify-center">
+      <div className="fixed inset-0 bg-gray-500/30 flex items-center justify-center z-50">
         {/* Responsive white division */}
         <div className="bg-white p-4 md:p-6 rounded-lg shadow-xl flex flex-col items-center text-center w-11/12 max-w-xs sm:max-w-sm">
           
