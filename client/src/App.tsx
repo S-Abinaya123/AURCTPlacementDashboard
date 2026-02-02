@@ -28,8 +28,8 @@ function App() {
                     </Route>
                     <Route element={<MainLayout />}>
                         <Route path="/" element={<HomePage />} />
-                        <Route path='/topics' element={<TopicPage />} />
                         <Route path='/mcq' element={<McqPage />} />
+                        <Route path='/topics' element={<TopicPage />} />
                     </Route>
                     <Route path='/test' element={<ExamPage />} />
 
