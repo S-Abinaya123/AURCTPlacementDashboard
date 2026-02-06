@@ -1,10 +1,26 @@
 import React, { useState } from "react";
 import StudentLoginSection from "./section/StudentLoginSection";
 import FacultyLoginSection from "./section/FacultyLoginSection";
+
+import FailToast from '../../components/messages/FailToast';
+import type { ToastDataType } from "../../types/messageType";
+
 import collegeLogo from "../../assets/mainImage/college-logo.jpeg";
 
 const LoginPage: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<"Student" | "Faculty">("Student");
+    const [activeTab, setActiveTab] = useState<"Student" | "Faculty">("Student");
+
+    const [showFailToast, setShowFailToast] = useState<boolean>(false);
+    const [toastKey, setToastKey] = useState(0);
+    const [toastData, setToastData] = useState<ToastDataType>({
+        title: '',
+        message: ''
+    });
+    const triggerFailToast = (title: string, message: string) => {
+        setToastData({ title, message });
+        setToastKey((k) => k + 1); // 🔥 force remount
+        setShowFailToast(true);
+    };
 
   return (
     <div
@@ -43,7 +59,7 @@ const LoginPage: React.FC = () => {
         <div className="flex bg-gray-100 rounded-full p-1 mb-6">
           <button
             onClick={() => setActiveTab("Student")}
-            className={`flex-1 py-2 rounded-full text-sm font-semibold transition ${
+            className={`flex-1 py-2 rounded-full text-sm font-semibold transition cursor-pointer ${
               activeTab === "Student"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-gray-600"
@@ -53,7 +69,7 @@ const LoginPage: React.FC = () => {
           </button>
           <button
             onClick={() => setActiveTab("Faculty")}
-            className={`flex-1 py-2 rounded-full text-sm font-semibold transition ${
+            className={`flex-1 py-2 rounded-full text-sm font-semibold transition cursor-pointer ${
               activeTab === "Faculty"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-gray-600"
@@ -64,11 +80,13 @@ const LoginPage: React.FC = () => {
         </div>
 
         {activeTab === "Student" ? (
-          <StudentLoginSection />
+          <StudentLoginSection onFail={triggerFailToast} />
         ) : (
           <FacultyLoginSection />
         )}
       </div>
+
+      <FailToast key={toastKey} title={toastData.title} message={toastData.message} show={showFailToast} onClose={() => setShowFailToast(false)} />
     </div>
   );
 };

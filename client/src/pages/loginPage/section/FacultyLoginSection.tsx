@@ -9,7 +9,7 @@ const FacultyLoginSection: React.FC = () => {
 
       <div className="relative">
         <input
-          type="tel"
+          type="number"
           placeholder="Mobile Number"
           className="w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
         />
