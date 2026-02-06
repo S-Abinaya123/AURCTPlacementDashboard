@@ -1,53 +1,75 @@
 import React, { useState } from "react";
 import StudentLoginSection from "./section/StudentLoginSection";
 import FacultyLoginSection from "./section/FacultyLoginSection";
-import collegeLogo from "../../assets/mainImage/college-logo.jpeg"
-
+import collegeLogo from "../../assets/mainImage/college-logo.jpeg";
 
 const LoginPage: React.FC = () => {
-  const[activeTab,setActiveTab] = useState<"Student"|"Faculty">("Student");
-return (
-    <div className="min-h-screen flex items-center justify-center bg-white p-4 font-sans">
-      <div className="flex flex-col md:flex-row bg-[#fffaf0] rounded-2xl shadow-lg w-full max-w-4xl border-2 border-[#8b5e3c]">
+  const [activeTab, setActiveTab] = useState<"Student" | "Faculty">("Student");
 
-        <div className=" md:flex w-full md:w-1/2 p-8 bg-[#8b5e3c] items-center justify-center rounded-xl text-white">
-          <div className="text-center space-y-4">
-            <h1 className="text-2xl md:text-2xl font-extrabold tracking-tight drop-shadow-md ">
-              Anna University Regional campus Tirunelveli
-            </h1>
-            <div className="flex justify-center mb-4">
-              <img
-                src={collegeLogo}
-                alt="college-logo"
-                className="rounded-full object-cover w-28 h-28 md:w-40 md:h-40 "
-              />
-            </div>
-            <h1 className="text-2xl md:text-2xl font-extrabold tracking-tight drop-shadow-md">
-              Welcome to the <br /> Placement Training Portal
-            </h1>
-            <p className="text-lg md:text-xl font-medium mt-2">
-              Your gateway to a successful career.
-            </p>
-          </div>
-        </div>
-        <div className="w-full md:w-1/2 p-8 text-[#5a3e2b] flex flex-col bg-white rounded-2xl">
-          <div className="grid grid-cols-2 gap-4 text-2l font-bold mb-5">
-            <button className={`py-2 px-4 rounded-xl cursor-pointer hover:bg-[#8b4513] transition-colors duration-300 ${
-              activeTab === "Student" ? "bg-[#b77039] text-white":"bg-gray-200 text-[#5a3e2b]"}`}
-              onClick={()=> setActiveTab("Student")}
-            >Student</button>
-            <button className={`py-2 px-4 rounded-xl cursor-pointer hover:bg-[#8b4513] transition-colors duration-300 ${
-              activeTab === "Faculty" ? "bg-[#b77039] text-white" : "bg-gray-200 text-[#5a3e2b]"}`}
-              onClick={()=>setActiveTab("Faculty")}
-            >Faculty</button>
-        </div>
-        {activeTab === "Student" ?
-         <StudentLoginSection/> : <FacultyLoginSection/>}
+  return (
+    <div
+      className="h-dvh flex items-center justify-center p-4 relative"
+      style={{
+        backgroundImage:
+          'url("https://ugcounselor-content.s3.ap-south-1.amazonaws.com/wp-content/uploads/2024/10/28193100/Anna-University-Regional-Campus-Tirunelveli.jpg")',
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        backgroundAttachment: "fixed",
+      }}
+    >
+      {/* 🔥 Dark Overlay */}
+      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+
+      {/* 🔥 Login Card */}
+      <div className="relative z-10 w-full max-w-md bg-white/85 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/40">
+        
+        {/* Logo + Title */}
+        <div className="text-center mb-8">
+          <img
+            src={collegeLogo}
+            alt="logo"
+            className="w-20 h-20 mx-auto rounded-full shadow-md mb-4 border-2 border-white"
+          />
+          <h1 className="text-xl font-bold text-gray-800">
+            Anna University - Tirunelveli
+          </h1>
+          <p className="text-sm text-gray-600">
+            Training & Placement Portal
+          </p>
         </div>
 
+        {/* Tabs */}
+        <div className="flex bg-gray-100 rounded-full p-1 mb-6">
+          <button
+            onClick={() => setActiveTab("Student")}
+            className={`flex-1 py-2 rounded-full text-sm font-semibold transition ${
+              activeTab === "Student"
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-600"
+            }`}
+          >
+            Student
+          </button>
+          <button
+            onClick={() => setActiveTab("Faculty")}
+            className={`flex-1 py-2 rounded-full text-sm font-semibold transition ${
+              activeTab === "Faculty"
+                ? "bg-blue-600 text-white shadow-md"
+                : "text-gray-600"
+            }`}
+          >
+            Faculty
+          </button>
+        </div>
+
+        {activeTab === "Student" ? (
+          <StudentLoginSection />
+        ) : (
+          <FacultyLoginSection />
+        )}
+      </div>
     </div>
-    </div>
-       
   );
 };
 
