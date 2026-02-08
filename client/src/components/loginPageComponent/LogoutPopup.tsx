@@ -18,8 +18,6 @@ const LogoutPopup: React.FC<LogoutPopupProps> = ({ onClose }) => {
     // Clear ALL data from local storage (e.g., tokens, user info)
     localStorage.clear(); 
     
-    console.log('Local storage cleared. User logging out...');
-    
     // 4. Navigate to the /auth route (login page)
     navigate('/auth');
     

@@ -1,142 +1,85 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-import CreateUserPopup from "../../../components/loginPageComponent/CreateUserPopup";
-import ResetPasswordPopup from "../../../components/loginPageComponent/ResetPasswordPopup";
+import { isValidRegisterNo } from "../../../utils/validation";
 
-const StudentLoginSection: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isNewUser, setIsNewUser] = useState(false);
-  const [showReset, setShowReset] = useState(false);
+type Props = {
+  onFail: (title: string, message: string) => void;
+  onCreateAccount: () => void;
+};
 
-  const [registerNumber, setRegisterNumber] = useState("");
+const StudentLoginSection: React.FC<Props> = ({
+  onFail,
+  onCreateAccount,
+}) => {
+  const [registerNo, setRegisterNo] = useState("");
   const [password, setPassword] = useState("");
-  const [registerNumberError, setRegisterNumberError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-  // ✅ Validation
-  const handleLogin = () => {
-    let valid = true;
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    if (!registerNumber) {
-      setRegisterNumberError("Enter the register number");
-      valid = false;
-    } else if (registerNumber.length !== 12) {
-      setRegisterNumberError("Register Number must be 12 digits");
-      valid = false;
-    } else {
-      setRegisterNumberError("");
+    if (!isValidRegisterNo(registerNo.trim())) {
+      onFail("Login Failed", "Enter a valid register number.");
+      return;
     }
 
-    if (!password) {
-      setPasswordError("Enter the password");
-      valid = false;
-    } else {
-      setPasswordError("");
-    }
-
-    if (valid) {
-      console.log("Login Success", { registerNumber, password });
+    if (!password.trim()) {
+      onFail("Login Failed", "Enter your password.");
+      return;
     }
   };
 
   return (
-    <div className="relative">
-      {/* Login Box */}
-      <div className="flex flex-col md:flex-row bg-white justify-center rounded-2xl shadow-lg w-full max-w-4xl border-2 border-[#8b5e3c] mb-3 mx-auto">
-        <div className="mt-3 w-full px-6">
-          <p className="text-black text-center font-bold text-3xl mb-6">
-            Student Login
-          </p>
+    <form onSubmit={handleLogin} className="space-y-5">
+      <input
+        type="text"
+        placeholder="Register Number"
+        value={registerNo}
+        onChange={(e) => setRegisterNo(e.target.value)}
+        className="w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
+      />
 
-          {/* Register Number */}
-          <div className="w-[90%] max-w-md mx-auto mb-3">
-            <input
-              type="number"
-              value={registerNumber}
-              onChange={(e) => setRegisterNumber(e.target.value)}
-              placeholder="Register Number"
-              className={`block w-full p-2 rounded bg-white border ${
-                registerNumberError ? "border-red-500" : "border-[#8b5e3c]"
-              } text-[#5a3e2b] placeholder-black focus:outline-none focus:ring-2 ${
-                registerNumberError
-                  ? "focus:ring-red-500"
-                  : "focus:ring-[#b77039]"
-              }`}
-            />
-            {registerNumberError && (
-              <p className="text-red-600 text-sm mt-1 flex items-center">
-                <span className="w-4 h-4 flex items-center justify-center border border-red-600 rounded-full mr-2">!</span>
-                {registerNumberError}
-              </p>
-            )}
-          </div>
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
+        />
 
-          {/* Password + Eye */}
-          <div className="w-[90%] max-w-md mx-auto mb-3">
-            <div className="relative">
-              <input
-                type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className={`w-full p-2 rounded bg-white border ${
-                  passwordError ? "border-red-500" : "border-[#8b5e2c]"
-                } text-[#5a3e2b] placeholder-black focus:outline-none focus:ring-2 ${
-                  passwordError ? "focus:ring-red-500" : "focus:ring-[#b77039]"
-                }`}
-              />
-              <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-2 top-3 cursor-pointer"
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </button>
-            </div>
-            {passwordError && (
-              <p className="text-red-600 text-sm mt-1 flex items-center">
-                <span className="w-4 h-4 flex items-center justify-center border border-red-600 rounded-full mr-2">!</span>
-                {passwordError}
-              </p>
-            )}
-          </div>
-
-          {/* Forgot Password */}
-          <div className="flex justify-end w-[90%] max-w-md mx-auto mb-4">
-            <button
-              onClick={() => setShowReset(true)}
-              className="text-sm text-blue-800 underline cursor-pointer"
-            >
-              Forgot Password?
-            </button>
-          </div>
-
-          {/* Login Button */}
-          <button
-            onClick={handleLogin}
-            className="block mx-auto w-[90%] max-w-md bg-[#8b4513] p-2 rounded mb-4 cursor-pointer text-white hover:bg-[#b77039] transition-colors duration-300"
-          >
-            Log in
-          </button>
-
-          {/* New User Link */}
-          <p className="text-[#5a3e2b] mb-6 text-center">
-            <button
-              className="text-blue-800 underline cursor-pointer"
-              onClick={() => setIsNewUser(true)}
-            >
-              New User?
-            </button>
-          </p>
-        </div>
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </button>
       </div>
 
-      {/* Create User Popup */}
-      {isNewUser && <CreateUserPopup onClose={() => setIsNewUser(false)} />}
+      <div className="text-right">
+        <button className="text-sm text-blue-600 hover:underline cursor-pointer">
+          Forgot Password?
+        </button>
+      </div>
 
-      {/* Reset Password Popup */}
-      {showReset && <ResetPasswordPopup onClose={() => setShowReset(false)} />}
-    </div>
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+      >
+        Log In
+      </button>
+
+      <p className="text-center text-sm text-gray-500">
+        New student?{" "}
+        <span
+          onClick={onCreateAccount}
+          className="text-blue-600 font-medium cursor-pointer hover:underline"
+        >
+          Create account
+        </span>
+      </p>
+    </form>
   );
 };
 

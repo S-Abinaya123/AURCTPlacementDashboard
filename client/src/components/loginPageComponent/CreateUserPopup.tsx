@@ -1,53 +1,57 @@
 import { useState } from "react";
+import { FaUserPlus } from "react-icons/fa";
 
 const CreateUserPopup = ({ onClose }: { onClose: () => void }) => {
-  const [input, setInput] = useState("");
+  const [registerNo, setRegisterNo] = useState("");
 
   return (
     <div
-      className="fixed inset-0 flex items-center justify-center bg-black/60 animate-fadeIn"
+      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center"
       onClick={onClose}
     >
       <div
-        className="relative w-[420px] bg-white rounded-xl shadow-[0_15px_40px_rgba(0,0,0,0.3)] p-8 text-center animate-popupScale"
         onClick={(e) => e.stopPropagation()}
+        className="relative w-full max-w-md rounded-2xl bg-white shadow-2xl px-8 py-7 animate-popupScale"
       >
-        <span
+        <button
           onClick={onClose}
-          className="absolute top-4 right-6 text-[22px] text-gray-500 cursor-pointer hover:text-gray-800 transition"
+          className="absolute top-4 right-4 text-2xl text-gray-400 hover:text-gray-700"
         >
           &times;
-        </span>
-        <h2 className="text-[28px] font-semibold mb-2 tracking-[2px] text-gray-800">
-          Create Account
+        </button>
+
+        <div className="flex justify-center mb-4">
+          <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center">
+            <FaUserPlus className="text-blue-600 text-2xl" />
+          </div>
+        </div>
+
+        <h2 className="text-2xl font-semibold text-center mb-1">
+          Create Student Account
         </h2>
 
-        <p className="text-[16px] mb-5 text-gray-500 tracking-wide">
-          Enter your Register Number
+        <p className="text-sm text-gray-500 text-center mb-6">
+          Enter your university register number
         </p>
 
         <input
           type="text"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          className="block w-[85%] mx-auto mb-8 px-4 py-3 text-lg border border-gray-300 rounded-lg outline-none transition tracking-[2px]
-          focus:border-green-500 focus:shadow-[0_0_8px_rgba(0,204,102,0.3)]"
+          value={registerNo}
+          onChange={(e) => setRegisterNo(e.target.value)}
+          placeholder="Register Number"
+          className="w-full px-4 py-3 border rounded-xl focus:ring-2 focus:ring-blue-200 mb-6"
         />
 
-        <div className="flex justify-center gap-5">
+        <div className="flex gap-4">
           <button
             onClick={onClose}
-            className="w-[120px] py-2.5 rounded-lg text-white text-[16px] font-medium tracking-wide bg-red-500 transition transform
-            hover:bg-red-600 hover:-translate-y-1 hover:shadow-[0_5px_15px_rgba(255,77,77,0.4)] cursor-pointer"
+            className="flex-1 py-2.5 rounded-xl border hover:bg-gray-100"
           >
             Cancel
           </button>
 
-          <button
-            className="w-[120px] py-2.5 rounded-lg text-white text-[16px] font-medium tracking-wide bg-green-500 transition transform
-            hover:bg-green-600 hover:-translate-y-1 hover:shadow-[0_5px_15px_rgba(0,204,102,0.4)] cursor-pointer"
-          >
-            Create
+          <button className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
+            Create Account
           </button>
         </div>
       </div>
