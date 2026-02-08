@@ -8,10 +8,17 @@ type signupDataType = {
     otp: number
 }
 
-type loginDataType = {
-    userName: string,
-    password: string
-}
+type LoginDataType =
+  | {
+      mobileNo: string;
+      password: string;
+      role: string;
+    }
+  | {
+      registerNo: string;
+      password: string;
+      role: string;
+    };
 
 type getOtpType = {
     userName: string,
@@ -26,11 +33,13 @@ type updatePasswordType = {
     newPassword: string
 }
 
-export const AuthService = {
+export const authService = {
+    login: (data: LoginDataType) => publicAxios.post('/api/auth/login', data),
+    verifyToken: () => authAxios.get('/api/auth/verify-token'),
+
+
     signup: (data: signupDataType) => publicAxios.post('/api/auth/createuser', data),
-    login: (data: loginDataType) => publicAxios.post('/api/auth/loginuser', data),
     getOtp: (data: getOtpType) => publicAxios.post('/api/auth/getotp', data),
     resetRequest: (data: resetRequestType) => publicAxios.post('/api/auth/resetrequest', data),
     updatePassword: (data: updatePasswordType) => publicAxios.put('/api/auth/update-password', data),
-    verifyToken: () => authAxios.get('/api/auth/verifytoken')
 }

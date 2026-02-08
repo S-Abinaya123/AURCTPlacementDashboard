@@ -1,16 +1,76 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
-const FacultyLoginSection: React.FC = () => {
-  const [showPassword, setShowPassword] = useState(false);
+import { isValidMobileNo } from "../../../utils/validation";
+import { authService } from "../../../service/auth.service";
+
+type FacultyLoginSectionProps = {
+    onFail: (title: string, message: string) => void;
+    redirectPath: string;
+};
+
+const FacultyLoginSection: React.FC<FacultyLoginSectionProps> = ({ onFail, redirectPath }) => {
+    const navigate = useNavigate();
+
+    const [mobileNo, setMobileNo] = useState<string>('');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [password, setPassword] = useState<string>('');
+
+    const handleLogin = async (e: any) => {
+        e.preventDefault();
+        if(!isValidMobileNo(mobileNo.trim())) {
+            onFail('Login Failed', 'Enter a valid mobile no.');
+            return;
+        }
+        else if(!password.trim()) {
+            onFail('Login Failed', 'Enter your password.');
+            return;
+        }
+        try {
+            const response = await authService.login({
+                mobileNo: mobileNo.trim(),
+                password: password.trim(),
+                role: 'FACULTY'
+            });
+            console.log(response.data);
+            const data = response.data.data;
+            if(response.status === 200) {
+                localStorage.setItem('Token', data.token);
+                localStorage.setItem('userId', data.userId);
+                localStorage.setItem('profilePicture', data.profilePicture);
+                localStorage.setItem('userName', data.userName);
+                localStorage.setItem('role', data.role);
+                navigate(redirectPath);
+            }
+        }
+        catch(err: any) {
+             if (err.response) {
+            // Server responded (4xx / 5xx)
+            if (err.response.status === 401) {
+                onFail("Invalid credentials", "Check your credentials");
+            } else {
+                onFail(
+                "Login Failed",
+                err.response.data?.message || "Something went wrong"
+                );
+            }
+            } else {
+            // Network / CORS / server down
+            onFail("Network Error", "Please try again later");
+            }
+        }
+    }
 
   return (
-    <div className="space-y-5">
+    <form onSubmit={handleLogin} className="space-y-5">
 
       <div className="relative">
         <input
-          type="number"
+          type="text"
           placeholder="Mobile Number"
+          value={mobileNo}
+          onChange={(e) => setMobileNo(e.target.value)}
           className="w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
         />
 
@@ -20,12 +80,15 @@ const FacultyLoginSection: React.FC = () => {
         <input
           type={showPassword ? "text" : "password"}
           placeholder="Password"
-          className="peer w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="peer w-full p-3 pr-12 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
         />
+
         <button
-          onClick={() => setShowPassword(!showPassword)}
           type="button"
-          className="absolute right-3 top-3 text-gray-500 cursor-pointer"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 cursor-pointer"
         >
           {showPassword ? <FaEyeSlash /> : <FaEye />}
         </button>
@@ -37,10 +100,10 @@ const FacultyLoginSection: React.FC = () => {
         </button>
       </div>
 
-      <button className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-800 hover:shadow-lg transition cursor-pointer">
+      <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-800 hover:shadow-lg transition cursor-pointer">
         Log In
       </button>
-    </div>
+    </form>
   );
 };
 

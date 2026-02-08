@@ -1,46 +1,68 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { useSearchParams, useLocation } from "react-router-dom";
+
 import StudentLoginSection from "./section/StudentLoginSection";
 import FacultyLoginSection from "./section/FacultyLoginSection";
 
-import FailToast from '../../components/messages/FailToast';
+import FailToast from "../../components/messages/FailToast";
 import type { ToastDataType } from "../../types/messageType";
 
 import collegeLogo from "../../assets/mainImage/college-logo.jpeg";
+import CreateUserPopup from "../../components/loginPageComponent/CreateUserPopup";
 
 const LoginPage: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<"Student" | "Faculty">("Student");
+    const location = useLocation();
+    const redirectPath = location.state?.from?.pathname || '/student/home';
 
-    const [showFailToast, setShowFailToast] = useState<boolean>(false);
-    const [toastKey, setToastKey] = useState(0);
-    const [toastData, setToastData] = useState<ToastDataType>({
-        title: '',
-        message: ''
-    });
-    const triggerFailToast = (title: string, message: string) => {
-        setToastData({ title, message });
-        setToastKey((k) => k + 1); // 🔥 force remount
-        setShowFailToast(true);
-    };
+    const [searchParams, setSearchParams] = useSearchParams();
+    const tabParam = searchParams.get('tab') || 'student';
+    const [tab, setTab] = useState<'student'|'faculty'>(tabParam as any);
+
+     useEffect(() => {
+        setSearchParams({ tab });
+    }, [tab]);
+    useEffect(() => {
+        const param = searchParams.get("tab") || "student";
+        if (param !== tab) {
+            setTab(param as 'student' | 'faculty');
+        }
+    }, [searchParams]);
+
+
+  const [showFailToast, setShowFailToast] = useState(false);
+  const [toastKey, setToastKey] = useState(0);
+  const [toastData, setToastData] = useState<ToastDataType>({
+    title: "",
+    message: "",
+  });
+
+  const [showCreatePopup, setShowCreatePopup] = useState(false);
+
+  const triggerFailToast = (title: string, message: string) => {
+    setToastData({ title, message });
+    setToastKey((k) => k + 1);
+    setShowFailToast(true);
+  };
 
   return (
     <div
-      className="h-dvh flex items-center justify-center p-4 relative"
+      className="h-dvh flex items-center justify-center p-4 relative overflow-hidden"
       style={{
         backgroundImage:
           'url("https://ugcounselor-content.s3.ap-south-1.amazonaws.com/wp-content/uploads/2024/10/28193100/Anna-University-Regional-Campus-Tirunelveli.jpg")',
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
-        backgroundAttachment: "fixed",
       }}
     >
-      {/* 🔥 Dark Overlay */}
-      <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
+      {/* 🔥 Background overlay ONLY when popup is closed */}
+      {!showCreatePopup && (
+        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
+      )}
 
       {/* 🔥 Login Card */}
       <div className="relative z-10 w-full max-w-md bg-white/85 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/40">
-        
-        {/* Logo + Title */}
+        {/* Logo */}
         <div className="text-center mb-8">
           <img
             src={collegeLogo}
@@ -58,19 +80,20 @@ const LoginPage: React.FC = () => {
         {/* Tabs */}
         <div className="flex bg-gray-100 rounded-full p-1 mb-6">
           <button
-            onClick={() => setActiveTab("Student")}
-            className={`flex-1 py-2 rounded-full text-sm font-semibold transition cursor-pointer ${
-              activeTab === "Student"
+            onClick={() => setTab("student")}
+            className={`flex-1 py-2 rounded-full text-sm font-semibold transition ${
+              tab === "student"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-gray-600"
             }`}
           >
             Student
           </button>
+
           <button
-            onClick={() => setActiveTab("Faculty")}
-            className={`flex-1 py-2 rounded-full text-sm font-semibold transition cursor-pointer ${
-              activeTab === "Faculty"
+            onClick={() => setTab("faculty")}
+            className={`flex-1 py-2 rounded-full text-sm font-semibold transition ${
+              tab === "faculty"
                 ? "bg-blue-600 text-white shadow-md"
                 : "text-gray-600"
             }`}
@@ -79,14 +102,29 @@ const LoginPage: React.FC = () => {
           </button>
         </div>
 
-        {activeTab === "Student" ? (
-          <StudentLoginSection onFail={triggerFailToast} />
+        {tab === "student" ? (
+          <StudentLoginSection
+            onFail={triggerFailToast}
+            onCreateAccount={() => setShowCreatePopup(true)}
+          />
         ) : (
-          <FacultyLoginSection />
+          <FacultyLoginSection onFail={triggerFailToast} redirectPath={redirectPath} />
         )}
       </div>
 
-      <FailToast key={toastKey} title={toastData.title} message={toastData.message} show={showFailToast} onClose={() => setShowFailToast(false)} />
+      {/* 🔥 Popup */}
+      {showCreatePopup && (
+        <CreateUserPopup onClose={() => setShowCreatePopup(false)} />
+      )}
+
+      {/* 🔥 Toast */}
+      <FailToast
+        key={toastKey}
+        title={toastData.title}
+        message={toastData.message}
+        show={showFailToast}
+        onClose={() => setShowFailToast(false)}
+      />
     </div>
   );
 };

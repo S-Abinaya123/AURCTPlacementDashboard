@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { AuthService } from '../service/auth.service';
+import { authService } from '../service/auth.service';
 import VerifyingUserLoading from '../components/loadingComponent/loginPageLoading/VerifyingUserLoading';
 
 const ProtectedRoute = () => {
@@ -13,7 +13,7 @@ const ProtectedRoute = () => {
         if (!token) return setIsValid(false);
 
         try {
-            const response = await AuthService.verifyToken();
+            const response = await authService.verifyToken();
             setIsValid(response.status === 200);
         } catch (err) {
             setIsValid(false);

@@ -1,73 +1,86 @@
 import React, { useState } from "react";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
-
 import { isValidRegisterNo } from "../../../utils/validation";
 
-type StudentLoginSectionProps = {
-    onFail: (title: string, message: string) => void;
+type Props = {
+  onFail: (title: string, message: string) => void;
+  onCreateAccount: () => void;
 };
 
-const StudentLoginSection: React.FC<StudentLoginSectionProps> = ({ onFail }) => {
+const StudentLoginSection: React.FC<Props> = ({
+  onFail,
+  onCreateAccount,
+}) => {
+  const [registerNo, setRegisterNo] = useState("");
+  const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
-    const [registerNo, setRegisterNo] = useState<string>('');
-    const [password, setPassword] = useState<string>('');
-    const [showPassword, setShowPassword] = useState(false);
+  const handleLogin = (e: React.FormEvent) => {
+    e.preventDefault();
 
-    // onFail("hello", "world");
-
-    const handleLogin = async (e: any) => {
-        e.preventDefault();
-        if(!isValidRegisterNo(registerNo.trim())) {
-            onFail('Login Failed', 'Enter a valid register no.');
-            return;
-        }
+    if (!isValidRegisterNo(registerNo.trim())) {
+      onFail("Login Failed", "Enter a valid register number.");
+      return;
     }
 
-    return (
-        <form onSubmit={handleLogin} className="space-y-5">
-            <div className="relative">
-                <input
-                type="text"
-                placeholder="Register Number"
-                value={registerNo}
-                onChange={(e) => setRegisterNo(e.target.value)}
-                className="peer w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                />
-            </div>
+    if (!password.trim()) {
+      onFail("Login Failed", "Enter your password.");
+      return;
+    }
+  };
 
-            <div className="relative">
-                <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="peer w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
-                />
-                <button
-                onClick={() => setShowPassword(!showPassword)}
-                type="button"
-                className="absolute right-3 top-3 text-gray-500 cursor-pointer"
-                >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-                </button>
-            </div>
+  return (
+    <form onSubmit={handleLogin} className="space-y-5">
+      <input
+        type="text"
+        placeholder="Register Number"
+        value={registerNo}
+        onChange={(e) => setRegisterNo(e.target.value)}
+        className="w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
+      />
 
-            <div className="text-right">
-                <button className="text-sm text-blue-600 hover:underline cursor-pointer">
-                Forgot Password?
-                </button>
-            </div>
+      <div className="relative">
+        <input
+          type={showPassword ? "text" : "password"}
+          placeholder="Password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
+        />
 
-            <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-800 hover:shadow-lg transition cursor-pointer">
-                Log In
-            </button>
+        <button
+          type="button"
+          onClick={() => setShowPassword(!showPassword)}
+          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+        >
+          {showPassword ? <FaEyeSlash /> : <FaEye />}
+        </button>
+      </div>
 
-            <p className="text-center text-sm text-gray-500">
-                New student? <span className="text-blue-600 font-medium cursor-pointer hover:underline">Create account</span>
-            </p>
-            
-        </form>
-    );
+      <div className="text-right">
+        <button className="text-sm text-blue-600 hover:underline cursor-pointer">
+          Forgot Password?
+        </button>
+      </div>
+
+      <button
+        type="submit"
+        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+      >
+        Log In
+      </button>
+
+      <p className="text-center text-sm text-gray-500">
+        New student?{" "}
+        <span
+          onClick={onCreateAccount}
+          className="text-blue-600 font-medium cursor-pointer hover:underline"
+        >
+          Create account
+        </span>
+      </p>
+    </form>
+  );
 };
 
 export default StudentLoginSection;

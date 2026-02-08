@@ -1,6 +1,6 @@
 import { useEffect, useState, type JSX } from 'react';
 import { Navigate } from 'react-router-dom';
-import { AuthService } from '../service/auth.service';
+import { authService } from '../service/auth.service';
 import VerifyingUserLoading from '../components/loadingComponent/loginPageLoading/VerifyingUserLoading';
 
 const PublicRoute = ({ element }: { element: JSX.Element }) => {
@@ -12,7 +12,7 @@ const PublicRoute = ({ element }: { element: JSX.Element }) => {
         if (!token) return setIsValid(false);
 
         try {
-            const response = await AuthService.verifyToken();
+            const response = await authService.verifyToken();
             setIsValid(response.status === 200);
         } catch (err) {
             setIsValid(false);
@@ -24,7 +24,11 @@ const PublicRoute = ({ element }: { element: JSX.Element }) => {
 
     if (isValid === null) return <VerifyingUserLoading />;
 
-    return isValid ? <Navigate to="/home" replace /> : element;
+    const role = localStorage.getItem('role');
+
+    if(role ==='ADMIN' || role === 'FACULTY') return isValid ? <Navigate to="/student/home" replace /> : element;
+    else return isValid ? <Navigate to="/student/home" replace /> : element;
+    
 };
 
 export default PublicRoute;
