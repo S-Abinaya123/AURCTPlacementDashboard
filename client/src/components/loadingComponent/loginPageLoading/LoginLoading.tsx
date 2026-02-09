@@ -1,23 +1,18 @@
-import './loginLoading.css'
-
-
 const LoginLoading = () => {
-    return (
-        <div className='outer-container z-50'>
-            <div className="wrapper">
-                <div className="box-wrap">
-                    <div className="box one"></div>
-                    <div className="box two"></div>
-                    <div className="box three"></div>
-                    <div className="box four"></div>
-                    <div className="box five"></div>
-                    <div className="box six"></div>
-                </div>
-                <div className="loading-text">Logging in...</div>
-            </div>
-        </div>
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      <div className="flex flex-col items-center gap-6 rounded-2xl bg-white/10 px-10 py-8 shadow-xl">
         
-    )
-}
+        {/* Spinner */}
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-white/30 border-t-white"></div>
 
-export default LoginLoading
+        {/* Text */}
+        <p className="text-sm tracking-widest text-white animate-pulse">
+          LOGGING IN...
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default LoginLoading;

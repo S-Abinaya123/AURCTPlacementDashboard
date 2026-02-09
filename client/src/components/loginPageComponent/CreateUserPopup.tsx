@@ -1,13 +1,33 @@
 import { useState } from "react";
 import { FaUserPlus } from "react-icons/fa";
+import { isValidRegisterNo } from "../../utils/validation";
+import OtpLoading from "../loadingComponent/loginPageLoading/OtpLoading";
 
-const CreateUserPopup = ({ onClose }: { onClose: () => void }) => {
-  const [registerNo, setRegisterNo] = useState("");
+type Props = {
+    onClose: () => void;
+    onFail: (title: string, message: string) => void;
+};
+
+// const CreateUserPopup = ({ onClose }: { onClose: () => void }) => {
+const CreateUserPopup: React.FC<Props> = ({
+    onClose,
+    onFail
+}) => {
+
+    const [registerNo, setRegisterNo] = useState<string>('');
+
+    const [otpLoading, setOtpLoading] = useState<boolean>(true);
+
+    const handleClick = async () => {
+        if(!isValidRegisterNo(registerNo.trim())) {
+            onFail("Failed", "Enter a valid register number.");
+            return;
+        }
+    }
 
   return (
     <div
       className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center"
-      onClick={onClose}
     >
       <div
         onClick={(e) => e.stopPropagation()}
@@ -50,11 +70,12 @@ const CreateUserPopup = ({ onClose }: { onClose: () => void }) => {
             Cancel
           </button>
 
-          <button className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
+          <button onClick={handleClick} className="flex-1 py-2.5 rounded-xl bg-blue-600 text-white hover:bg-blue-700">
             Create Account
           </button>
         </div>
       </div>
+      { otpLoading && <OtpLoading /> }
     </div>
   );
 };

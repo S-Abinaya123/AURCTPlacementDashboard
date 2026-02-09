@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 
 import { isValidMobileNo } from "../../../utils/validation";
 import { authService } from "../../../service/auth.service";
+import LoginLoading from "../../../components/loadingComponent/loginPageLoading/LoginLoading";
 
 type FacultyLoginSectionProps = {
     onFail: (title: string, message: string) => void;
@@ -17,6 +18,8 @@ const FacultyLoginSection: React.FC<FacultyLoginSectionProps> = ({ onFail, redir
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [password, setPassword] = useState<string>('');
 
+    const [loginLoading, setLoginLoading] = useState<boolean>(false);
+
     const handleLogin = async (e: any) => {
         e.preventDefault();
         if(!isValidMobileNo(mobileNo.trim())) {
@@ -28,25 +31,26 @@ const FacultyLoginSection: React.FC<FacultyLoginSectionProps> = ({ onFail, redir
             return;
         }
         try {
+            setLoginLoading(true);
             const response = await authService.login({
                 mobileNo: mobileNo.trim(),
                 password: password.trim(),
                 role: 'FACULTY'
             });
-            console.log(response.data);
             const data = response.data.data;
+            setLoginLoading(false);
             if(response.status === 200) {
                 localStorage.setItem('Token', data.token);
                 localStorage.setItem('userId', data.userId);
                 localStorage.setItem('profilePicture', data.profilePicture);
                 localStorage.setItem('userName', data.userName);
                 localStorage.setItem('role', data.role);
-                navigate(redirectPath);
+                navigate(redirectPath || '/faculty/home');
             }
         }
         catch(err: any) {
+            setLoginLoading(false);
              if (err.response) {
-            // Server responded (4xx / 5xx)
             if (err.response.status === 401) {
                 onFail("Invalid credentials", "Check your credentials");
             } else {
@@ -60,6 +64,7 @@ const FacultyLoginSection: React.FC<FacultyLoginSectionProps> = ({ onFail, redir
             onFail("Network Error", "Please try again later");
             }
         }
+        finally { setLoginLoading(false); }
     }
 
   return (
@@ -103,6 +108,7 @@ const FacultyLoginSection: React.FC<FacultyLoginSectionProps> = ({ onFail, redir
       <button type="submit" className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold shadow-md hover:bg-blue-800 hover:shadow-lg transition cursor-pointer">
         Log In
       </button>
+      { loginLoading && <LoginLoading /> }
     </form>
   );
 };

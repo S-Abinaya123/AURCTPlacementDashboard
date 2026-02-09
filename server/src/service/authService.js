@@ -5,10 +5,12 @@ import { generateJwtToken } from "../utils/jwtToken.js";
 export const loginUserService = async (loginCredentials) => {
     try {
         const { role } = loginCredentials;
+        console.log(loginCredentials)
 
         if(role == 'STUDENT') {
             const { registerNo, password } = loginCredentials;
-            const student = User.findOne({ registerNo }).exec();
+            console.log(registerNo);
+            const student = await User.findOne({ registerNo }).exec();
             if(!student) {
                 return { status: 401, message: 'Invalid register number or password.' };
             }
@@ -18,7 +20,13 @@ export const loginUserService = async (loginCredentials) => {
 
             const isPasswordCorrect = await bcrypt.compare(password, student.password);
             if (isPasswordCorrect) {
-                return {status: 200, message: 'Loggedin successfully.', userId: student._id};
+                return {status: 200, message: 'Loggedin successfully.', data: {
+                    userId: student._id,
+                    token: generateJwtToken({userId: student._id}, '180d'),
+                    userName: student.userName,
+                    profilePicture: student.profilePicture || '',
+                    role: student.role
+                }};
             }
             else {
                 return { status: 401, message: 'Invalid register number or password.' };
