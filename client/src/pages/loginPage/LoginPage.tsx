@@ -8,11 +8,12 @@ import FailToast from "../../components/messages/FailToast";
 import type { ToastDataType } from "../../types/messageType";
 
 import collegeLogo from "../../assets/mainImage/college-logo.jpeg";
-import CreateUserPopup from "../../components/loginPageComponent/CreateUserPopup";
 
 const LoginPage: React.FC = () => {
     const location = useLocation();
-    const redirectPath = location.state?.from?.pathname || '/student/home';
+
+    // const isStudent = localStorage.getItem('role') === 'STUDENT' || localStorage.getItem('role') === 'MODERATOR';
+    const redirectPath = location.state?.from?.pathname;
 
     const [searchParams, setSearchParams] = useSearchParams();
     const tabParam = searchParams.get('tab') || 'student';
@@ -36,8 +37,6 @@ const LoginPage: React.FC = () => {
     message: "",
   });
 
-  const [showCreatePopup, setShowCreatePopup] = useState(false);
-
   const triggerFailToast = (title: string, message: string) => {
     setToastData({ title, message });
     setToastKey((k) => k + 1);
@@ -46,7 +45,7 @@ const LoginPage: React.FC = () => {
 
   return (
     <div
-      className="h-dvh flex items-center justify-center p-4 relative overflow-hidden"
+      className="min-h-dvh flex items-center justify-center p-4"
       style={{
         backgroundImage:
           'url("https://ugcounselor-content.s3.ap-south-1.amazonaws.com/wp-content/uploads/2024/10/28193100/Anna-University-Regional-Campus-Tirunelveli.jpg")',
@@ -55,13 +54,9 @@ const LoginPage: React.FC = () => {
         backgroundRepeat: "no-repeat",
       }}
     >
-      {/* 🔥 Background overlay ONLY when popup is closed */}
-      {!showCreatePopup && (
-        <div className="absolute inset-0 bg-black/50 backdrop-blur-[2px]" />
-      )}
 
       {/* 🔥 Login Card */}
-      <div className="relative z-10 w-full max-w-md bg-white/85 backdrop-blur-xl rounded-3xl shadow-2xl p-8 border border-white/40">
+      <div className="z-10 w-full max-w-md bg-white/95 rounded-3xl shadow-2xl p-8 border border-white/40">
         {/* Logo */}
         <div className="text-center mb-8">
           <img
@@ -105,17 +100,12 @@ const LoginPage: React.FC = () => {
         {tab === "student" ? (
           <StudentLoginSection
             onFail={triggerFailToast}
-            onCreateAccount={() => setShowCreatePopup(true)}
+            redirectPath={redirectPath}
           />
         ) : (
           <FacultyLoginSection onFail={triggerFailToast} redirectPath={redirectPath} />
         )}
       </div>
-
-      {/* 🔥 Popup */}
-      {showCreatePopup && (
-        <CreateUserPopup onClose={() => setShowCreatePopup(false)} />
-      )}
 
       {/* 🔥 Toast */}
       <FailToast

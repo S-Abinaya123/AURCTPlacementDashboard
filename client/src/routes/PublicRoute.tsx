@@ -26,7 +26,7 @@ const PublicRoute = ({ element }: { element: JSX.Element }) => {
 
     const role = localStorage.getItem('role');
 
-    if(role ==='ADMIN' || role === 'FACULTY') return isValid ? <Navigate to="/student/home" replace /> : element;
+    if(role ==='ADMIN' || role === 'FACULTY') return isValid ? <Navigate to="/faculty/home" replace /> : element;
     else return isValid ? <Navigate to="/student/home" replace /> : element;
     
 };

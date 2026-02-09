@@ -5,10 +5,11 @@ const userSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     profilePicture: { type: String },
-    registerNo: { type: Number },
+    registerNo: { type: String },
     mobileNo: { type: String },
     deptName: { type: String },
     year: { type: Number },
+    semester: { type: Number },
     role: { type: String, enum: ['STUDENT', 'FACULTY', 'ALUMNI', 'MODERATOR', 'ADMIN'], required: true },
     gender: { type: String, enum: ["female", "male"] },
 
