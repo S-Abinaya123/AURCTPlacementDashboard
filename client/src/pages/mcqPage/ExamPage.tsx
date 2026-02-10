@@ -1,278 +1,266 @@
-import React, { useState } from 'react';
-import EndExamPopup from '../../components/mcqPageComponent/EndExamPopup';
+import React, { useEffect, useState } from "react";
 
-// --- Types and Interfaces ---
-interface OptionProps { label: string; value: string; isSelected: boolean; onSelect: (value: string) => void; }
-
-// --- Component Styles (Inline for Simplicity) ---
-const styles = {
-    // --- Layout & Container Styles ---
-    pageContainer: { maxWidth: '1024px', margin: '35px auto', padding: '20px', fontFamily: 'Inter, Arial, sans-serif', backgroundColor: '#f0f0f0', borderRadius: '12px', boxShadow: '0 8px 16px rgba(0,0,0,0.15)', } as React.CSSProperties,
-
-    // Box around Question Content (Base for Options and Timer)
-    questionBox: { border: '1px solid #333', padding: '30px', borderRadius: '8px', backgroundColor: '#fff', marginTop: '17px', position: 'relative', boxShadow: '2px 2px 0px 0px rgba(0,0,0,0.1)', } as React.CSSProperties,
-
-    // --- Button & Interaction Styles ---
-    button: { padding: '10px 20px', borderRadius: '8px', border: '1px solid #333', cursor: 'pointer', fontWeight: 'bold', transition: 'all 0.15s ease-in-out', } as React.CSSProperties,
-
-    // Highlighted Yellow Button Style (Next)
-    yellowButton: { backgroundColor: '#ffc107', color: '#333', boxShadow: '2px 2px 0px 0px #000', } as React.CSSProperties,
-
-    // Yellow Button Hover Effect
-    yellowButtonHover: { transform: 'translateY(-1px) translateX(-1px)', boxShadow: '3px 3px 0px 0px #000', } as React.CSSProperties,
-
-    // Default White Button Style (Previous, Navbar)
-    whiteButton: { backgroundColor: '#fff', color: '#333', boxShadow: '2px 2px 0px 0px #ccc', } as React.CSSProperties,
-
-    // White Button Hover Effect
-    whiteButtonHover: { backgroundColor: '#f0f0f0', transform: 'translateY(-1px) translateX(-1px)', boxShadow: '3px 3px 0px 0px #aaa', } as React.CSSProperties,
-
-    // Option Hover Effect Base
-    optionHover: { backgroundColor: '#fffbe6', borderColor: '#ffc107', boxBoxShadow: '0 0 5px rgba(255, 193, 7, 0.5)', } as React.CSSProperties,
-
-    // --- Text & Misc Styles ---
-    highlightText: { backgroundColor: '#ccffcc', padding: '2px 8px', borderRadius: '4px', fontWeight: 'normal', border: '1px solid #333', } as React.CSSProperties,
-
-    // New Timer Style (Redesigned & Decreased Size)
-    timerBox: { padding: '3px 10px', borderRadius: '6px', backgroundColor: '#fff', border: '2px solid #333', boxShadow: '3px 3px 0px 0px #ccc', display: 'flex', alignItems: 'center' } as React.CSSProperties,
+type Question = {
+  id: number;
+  question: string;
+  options: string[];
+  correct: number;
+  selected?: number;
+  review?: boolean;
+  visited?: boolean; // ✅ NEW
 };
 
-// --- Single Main Component ---
+const TOTAL_TIME = 15 * 60;
+
 const ExamPage: React.FC = () => {
-    // --- State and Data ---
-    const [currentQuestion, setCurrentQuestion] = useState(1);
-    const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState(TOTAL_TIME);
+  const [current, setCurrent] = useState(0);
+  const [submitted, setSubmitted] = useState(false);
+  const [showOverlay, setShowOverlay] = useState(false);
 
-    const totalQuestions = 30, examTitle = "Harvard maths inference exam (hard)";
-    // Timer state (in seconds)
-    const [timeElapsed, setTimeElapsed] = useState(0);
-    // Convert seconds → MM:SS
-    const formatTime = (seconds: number) => {
-        const mins = Math.floor(seconds / 60);
-        const secs = seconds % 60;
-        return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`;
-    };
+  const [questions, setQuestions] = useState<Question[]>([
+    {
+      id: 1,
+      question: "What is the time complexity of Binary Search?",
+      options: ["O(n)", "O(log n)", "O(n log n)", "O(1)"],
+      correct: 1,
+    },
+    {
+      id: 2,
+      question: "Which data structure uses FIFO?",
+      options: ["Stack", "Queue", "Tree", "Graph"],
+      correct: 1,
+    },
+    {
+      id: 3,
+      question: "Which is NOT an operating system?",
+      options: ["Linux", "Windows", "Oracle", "MacOS"],
+      correct: 2,
+    },
+  ]);
 
-    React.useEffect(() => {
-        const timer = setInterval(() => {
-            setTimeElapsed(prev => prev + 1);   // Increment time
-        }, 1000);
+  // ⏱ TIMER
+  useEffect(() => {
+    if (timeLeft <= 0) {
+      setShowOverlay(true);
+      return;
+    }
+    const timer = setInterval(() => setTimeLeft((t) => t - 1), 1000);
+    return () => clearInterval(timer);
+  }, [timeLeft]);
 
-        return () => clearInterval(timer);    // Cleanup when component unmounts
-    }, []);
+  // ✅ MARK QUESTION AS VISITED
+  useEffect(() => {
+    const updated = [...questions];
+    updated[current].visited = true;
+    setQuestions(updated);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [current]);
 
-    const questionData = { text: 'What is the value of the hardest math question $1+1=$?', options: [{ label: 'a', value: '1' }, { label: 'b', value: '2' }, { label: 'c', value: '3' }, { label: 'd', value: 'karkuzhali only knows' }], };
+  const formatTime = (s: number) =>
+    `${Math.floor(s / 60)
+      .toString()
+      .padStart(2, "0")}:${(s % 60).toString().padStart(2, "0")}`;
 
-    // --- Handlers ---
-    const handleAnswerSelect = setSelectedAnswer;
+  const handleOptionSelect = (index: number) => {
+    const updated = [...questions];
+    updated[current].selected = index;
+    setQuestions(updated);
+  };
 
-    const handleNavigate = (q: number) => {
-        if (q >= 1 && q <= totalQuestions) {
-            setCurrentQuestion(q);
-            setSelectedAnswer(null); // Load saved answer in a real app
-        }
-    };
+  const toggleReview = () => {
+    const updated = [...questions];
+    updated[current].review = !updated[current].review;
+    setQuestions(updated);
+  };
 
+  const handleSubmit = () => {
+    setShowOverlay(true);
+  };
 
-    const [startIndex, setStartIndex] = useState(0); // window start for question numbers
-    const windowSize = 10; // how many numbers to show at a time
+  const score = questions.filter(
+    (q) => q.selected === q.correct
+  ).length;
 
-    const handlePrevious = () => {
-        if (currentQuestion > 1) {
-            const newQ = currentQuestion - 1;
-            setCurrentQuestion(newQ);
-
-            // Shift window left if needed
-            if (newQ - 1 < startIndex) {
-                setStartIndex(startIndex - 1);
-            }
-        }
-    };
-
-    const handleNext = () => {
-        if (currentQuestion < totalQuestions) {
-            const newQ = currentQuestion + 1;
-            setCurrentQuestion(newQ);
-
-            // Shift window right if needed
-            if (newQ > startIndex + windowSize) {
-                setStartIndex(startIndex + 1);
-            }
-        }
-    };
-
-
-
-
-    // --- Inline Helper Functions ---
-
-    // Renders a single answer option
-    const OptionRenderer: React.FC<OptionProps> = ({ label, value, isSelected, onSelect }) => {
-        const [isHovered, setIsHovered] = useState(false);
-        const s = styles;
-        const common = { ...s.questionBox, padding: '15px', marginBottom: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', boxShadow: 'none', transition: 'all 0.2s ease-in-out', border: '1px solid #ddd', backgroundColor: '#fff' } as React.CSSProperties;
-        const selected = isSelected ? { border: '2px solid #ffc107', backgroundColor: '#fffbe6', boxShadow: '0 0 5px rgba(255, 193, 7, 0.8)', } : {};
-        const hover = isHovered && !isSelected ? s.optionHover : {};
-
-        return (
-            <div
-                style={{ ...common, ...selected, ...hover }}
-                onClick={() => onSelect(value)}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-            >
-                <span style={{ width: '30px', fontWeight: 'bold', color: '#555' } as React.CSSProperties}>{label})</span>
-                <span>{value}</span>
-            </div>
-        );
-    };
-
-    // Renders the Previous/Next buttons (large style, at the bottom)
-    const ControlButtonRenderer: React.FC<{ children: React.ReactNode, onClick: () => void, isYellow: boolean }> = ({ children, onClick, isYellow }) => {
-        const [isHovered, setIsHovered] = useState(false);
-        const { button, yellowButton, whiteButton, yellowButtonHover, whiteButtonHover } = styles;
-        const base = isYellow ? yellowButton : whiteButton;
-        const hover = isYellow ? yellowButtonHover : whiteButtonHover;
-        return (
-            <button
-                style={{ ...button, ...base, ...(isHovered && hover) }}
-                onClick={onClick}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-            >{children}</button>
-        );
-    };
-
-    // Renders the Question Navigation buttons (small, numbered style)
-    const NavButtonRenderer: React.FC<{ num: number }> = ({ num }) => {
-        const [isHovered, setIsHovered] = useState(false);
-        const { button, yellowButton, whiteButton, yellowButtonHover, whiteButtonHover } = styles;
-        const isCurrent = num === currentQuestion;
-        const base = isCurrent ? yellowButton : whiteButton;
-        const hover = isCurrent ? yellowButtonHover : whiteButtonHover;
-
-        return (
-            <button
-                style={{ ...button, ...base, width: '40px', height: '40px', padding: 0, ...(isHovered && hover) }}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                onClick={() => handleNavigate(num)}
-            >{num}</button>
-        );
-    };
-
-    // Renders the small Previous/Next arrow buttons for the navigation bar
-    const NavArrowButtonRenderer: React.FC<{ direction: 'prev' | 'next' }> = ({ direction }) => {
-        const [isHovered, setIsHovered] = useState(false);
-        const isPrev = direction === 'prev';
-        const isDisabled = isPrev ? currentQuestion === 1 : currentQuestion === totalQuestions;
-        const onClick = isPrev ? handlePrevious : handleNext;
-        const { button } = styles;
-
-        const baseStyle: React.CSSProperties = { ...button, width: '40px', height: '40px', padding: 0, border: 'none', boxShadow: 'none', backgroundColor: 'transparent', opacity: isDisabled ? 0.5 : 1, cursor: isDisabled ? 'not-allowed' : 'pointer', color: '#555' };
-        const hoverStyle: React.CSSProperties = { backgroundColor: '#e0e0e0', border: 'none', boxShadow: 'none' };
-
-        return (
-            <button
-                style={{ ...baseStyle, ...(isHovered && !isDisabled && hoverStyle) }}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-                onClick={() => { if (!isDisabled) onClick(); }}
-                disabled={isDisabled}
-            >{isPrev ? '◀' : '▶'}</button>
-        );
-    };
-
-
-    // --- Main Render Block ---
-    const questionNumbers = Array.from({ length: totalQuestions }, (_, i) => i + 1);
-    const [showEndPopup, setShowEndPopup] = useState(false);
-
+  if (submitted) {
     return (
-        <div style={styles.pageContainer}>
-
-            {/* 1. Header (Left: Title, Center: Timer Nudged Right, Right: End Practice) */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', alignItems: 'center', marginBottom: '18px' }}>
-
-                {/* Left: Title */}
-                <h1 style={{ fontSize: 'clamp(1.2em, 4vw, 1.5em)', fontWeight: 'bold', justifySelf: 'start' }}>{examTitle}</h1>
-
-                {/* Center: Timer Box (Nudged right via marginLeft) */}
-                <div style={{ justifySelf: 'center', marginLeft: '20px' }}>
-                    <div style={styles.timerBox}>
-                        <span role="img" aria-label="timer" style={{ fontSize: 'clamp(0.8em, 2.5vw, 1em)' }}>⏱️</span>
-                        <span style={{ fontWeight: '900', color: '#d9534f', fontSize: 'clamp(0.8em, 2.5vw, 1em)' }}>{formatTime(timeElapsed)}
-                        </span>
-                    </div>
-                </div>
-
-
-                {/* Right: End Practice Button */}
-                <button
-                    onClick={() => setShowEndPopup(true)}
-                    className="cursor-pointer py-3 px-5 rounded-lg font-semibold text-white bg-gradient-to-br from-[#e74c3c] to-[#c0392b] transition-transform duration-300 hover:shadow-lg hover:shadow-red-400/50"
-                    style={{ justifySelf: 'end' }}
-                >
-                    End Exam
-                </button>
-
-                {showEndPopup && (
-                    <EndExamPopup
-                        onClose={() => setShowEndPopup(false)}            // Continue Exam
-                        onQuit={() => {
-                            // Navigate to End Exam page or route
-                            console.log("Exam Ended");
-                            // Example: if using react-router:
-                            // navigate("/end-exam");
-                        }}
-                    />
-                )}
-
-
-            </div>
-
-            {/* 2. Question Navbar (Centered with Prev/Next arrows) */}
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', marginBottom: '30px', justifyContent: 'center' }}>
-                <NavArrowButtonRenderer direction="prev" />
-                {questionNumbers.slice(startIndex, startIndex + windowSize).map(num => (
-                    <NavButtonRenderer key={num} num={num} />
-                ))}
-
-                <NavArrowButtonRenderer direction="next" />
-            </div>
-
-            {/* 3. Question Area */}
-            <div style={styles.questionBox}>
-                <p style={{ fontSize: '1.2em', fontWeight: 'normal', marginBottom: '20px' }}>
-                    {currentQuestion}. {questionData.text}
-                </p>
-
-                {/* Options */}
-                <div style={{ marginBottom: '35px' }}>
-                    {questionData.options.map(option => (
-                        <OptionRenderer
-                            key={option.label}
-                            label={option.label}
-                            value={option.value}
-                            isSelected={selectedAnswer === option.value}
-                            onSelect={handleAnswerSelect}
-                        />
-                    ))}
-                </div>
-
-                {/* Controls */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <ControlButtonRenderer onClick={handlePrevious} isYellow={false}>Previous</ControlButtonRenderer>
-                    <ControlButtonRenderer onClick={handleNext} isYellow={true}>Next</ControlButtonRenderer>
-                </div>
-
-                <p style={{ textAlign: 'center', fontSize: '0.9em' }}>
-                    Question {currentQuestion}/{totalQuestions}
-                </p>
-            </div>
-
+      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="bg-white p-8 rounded-xl shadow-md text-center">
+          <h1 className="text-2xl font-bold mb-4">Exam Submitted ✅</h1>
+          <p className="text-lg">
+            Score: <b>{score}</b> / {questions.length}
+          </p>
         </div>
+      </div>
     );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-100 flex flex-col">
+      {/* HEADER */}
+      <header className="bg-white border-b shadow-sm sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+          <h1 className="font-semibold text-gray-800">
+            Data Structures – Final Exam
+          </h1>
+
+          <div className="flex items-center gap-4">
+            <span className="px-4 py-1 rounded-full border text-red-600 font-semibold">
+              ⏱ {formatTime(timeLeft)}
+            </span>
+            <button
+              onClick={handleSubmit}
+              className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
+            >
+              Submit Exam
+            </button>
+          </div>
+        </div>
+      </header>
+
+      {/* BODY */}
+      <main className="flex flex-grow max-w-7xl mx-auto w-full">
+        {/* QUESTION AREA */}
+        <div className="w-3/4 p-6">
+          <div className="bg-white rounded-xl shadow-sm p-6">
+            <p className="text-sm text-gray-500 mb-2">
+              Question {current + 1} of {questions.length}
+            </p>
+
+            <h2 className="text-lg font-medium mb-6">
+              {questions[current].question}
+            </h2>
+
+            <div className="space-y-3">
+              {questions[current].options.map((opt, idx) => (
+                <label
+                  key={idx}
+                  className={`flex items-center gap-4 p-4 border rounded-lg cursor-pointer
+                  ${
+                    questions[current].selected === idx
+                      ? "border-blue-500 bg-blue-50"
+                      : "hover:bg-gray-50"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    checked={questions[current].selected === idx}
+                    onChange={() => handleOptionSelect(idx)}
+                    className="accent-blue-600"
+                  />
+                  <span>{opt}</span>
+                </label>
+              ))}
+            </div>
+
+            {/* CONTROLS */}
+            <div className="flex justify-between items-center mt-8">
+              <button
+                onClick={toggleReview}
+                className={`px-4 py-2 rounded-lg border
+                ${
+                  questions[current].review
+                    ? "bg-yellow-100 border-yellow-500"
+                    : "hover:bg-gray-100"
+                }`}
+              >
+                Mark for Review
+              </button>
+
+              <div className="flex gap-3">
+                <button
+                  disabled={current === 0}
+                  onClick={() => setCurrent((c) => c - 1)}
+                  className="px-5 py-2 border rounded-lg hover:bg-gray-100 disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <button
+                  disabled={current === questions.length - 1}
+                  onClick={() => setCurrent((c) => c + 1)}
+                  className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* QUESTION PALETTE */}
+        <aside className="w-1/4 p-6">
+          <div className="bg-white rounded-xl shadow-sm p-4">
+            <h3 className="font-semibold mb-4">Question Palette</h3>
+
+            <div className="grid grid-cols-5 gap-3">
+              {questions.map((q, idx) => {
+                let color = "bg-gray-200"; // not visited
+
+                if (q.visited && q.selected === undefined) {
+                  color = "bg-yellow-400 text-white"; // visited only
+                }
+                if (q.selected !== undefined) {
+                  color = "bg-green-500 text-white"; // answered
+                }
+
+                return (
+                  <button
+                    key={q.id}
+                    onClick={() => setCurrent(idx)}
+                    className={`h-10 rounded-lg text-sm font-semibold
+                      ${color}
+                      ${current === idx ? "ring-2 ring-blue-500" : ""}`}
+                  >
+                    {idx + 1}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* LEGEND */}
+            <div className="mt-4 text-xs space-y-2">
+              <p>
+                <span className="inline-block w-3 h-3 bg-green-500 mr-2"></span>
+                Answered
+              </p>
+              <p>
+                <span className="inline-block w-3 h-3 bg-yellow-400 mr-2"></span>
+                Visited
+              </p>
+              <p>
+                <span className="inline-block w-3 h-3 bg-gray-300 mr-2"></span>
+                Not Visited
+              </p>
+            </div>
+          </div>
+        </aside>
+      </main>
+
+      {/* SUBMIT OVERLAY */}
+      {showOverlay && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-2xl p-8 w-[380px] text-center shadow-xl">
+            <div className="text-green-600 text-5xl mb-4">✅</div>
+            <h2 className="text-xl font-semibold mb-2">
+              Exam Submitted Successfully
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Your responses have been recorded.
+            </p>
+            <button
+              onClick={() => {
+                setShowOverlay(false);
+                setSubmitted(true);
+              }}
+              className="w-full py-3 bg-green-600 text-white rounded-lg hover:bg-green-700"
+            >
+              View Result
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 };
 
 export default ExamPage;
