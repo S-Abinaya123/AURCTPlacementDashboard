@@ -15,6 +15,10 @@ import NotFoundPage from './pages/otherpages/NotFoundPage';
 import TopicPage from './pages/mcqPage/TopicPage';
 import McqPage from './pages/mcqPage/McqPage';
 import ExamPage from './pages/mcqPage/ExamPage';
+import FacultymcqPage from './pages/mcqpage/FacultymcqPage';
+
+import FacultyMainLayout from "./layouts/FacultyMainLayout";
+import FacultyHomePage from "./pages/homePage/FacultyHomePage";
 
 function App() {
 
@@ -23,19 +27,28 @@ function App() {
             <Router>
                 <Routes>
 
-                    <Route element={<ProtectedRoute />}>
-                        
+                    <Route path="/faculty" element={<FacultyMainLayout />}>
+                        <Route index element={<FacultyHomePage />} />
+                        <Route path="mcqpage" element={<FacultymcqPage />} />
                     </Route>
-                    <Route element={<MainLayout />}>
-                        <Route path="/" element={<HomePage />} />
-                        <Route path='/mcq' element={<McqPage />} />
-                        <Route path='/topics' element={<TopicPage />} />
+
+                    <Route element={<ProtectedRoute />}></Route>
+
+                    <Route path="/" element={<MainLayout />}>
+                        <Route index element={<HomePage />} />
                     </Route>
-                    <Route path='/test' element={<ExamPage />} />
+
+                    <Route path="/student" element={<MainLayout />}>
+                        <Route path="topics" element={<TopicPage />} />
+                        <Route path="mcq" element={<McqPage />} />
+                        <Route path="test" element={<ExamPage />} />
+                    </Route>
 
                     <Route path="/auth" element={<PublicRoute element={<LoginPage />} />} />
                     <Route path="/auth/reset-password" element={<PublicRoute element={<PasswordResetPage />} />} />
+
                     <Route path="*" element={<NotFoundPage />} />
+
                 </Routes>
             </Router>
         </ThemeProvider>
