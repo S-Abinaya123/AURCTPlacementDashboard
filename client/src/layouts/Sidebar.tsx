@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+
 import { NavLink } from "react-router-dom";
 import {
   FaHome,
@@ -9,25 +10,31 @@ import {
   FaGraduationCap,
   FaCog,
   FaPowerOff,
+  FaUniversity,
 } from "react-icons/fa";
 import LogoutPopup from "../components/loginPageComponent/LogoutPopup";
 
-
-// ✅ Reusable Sidebar Link Component
 const SideLink = ({
   icon,
   to,
   children,
+  onClick,
 }: {
   icon: React.ReactNode;
   to: string;
   children: React.ReactNode;
+  onClick?: () => void;
 }) => (
   <NavLink
     to={to}
+    onClick={onClick}
     className={({ isActive }) =>
-      `flex items-center gap-2 px-3 py-2 font-bold rounded-lg border-b-2 border-white transition-colors
-       ${isActive ? "bg-[#e4ac74] text-black" : "text-black hover:bg-[#e4ac74]"}`
+      `flex items-center gap-2 px-3 py-2 font-bold rounded-lg transition-colors
+       ${
+         isActive
+           ? "bg-blue-700 text-white"
+           : "text-black hover:bg-blue-600 hover:text-white"
+       }`
     }
   >
     {icon}
@@ -35,27 +42,27 @@ const SideLink = ({
   </NavLink>
 );
 
-export default function Sidebar() {
-  // State to control the visibility of the Logout popup
+export default function Sidebar({
+  isOpen,
+  onClose,
+}: {
+  isOpen: boolean;
+  onClose: () => void;
+}) {
   const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
-
-  // Function to open the popup when the Logout button is clicked
-  const handleLogoutClick = () => {
-    setIsLogoutPopupOpen(true);
-  };
-
-  // Function to close the popup, passed to LogoutPopup
-  const handleClosePopup = () => {
-    setIsLogoutPopupOpen(false);
-  };
 
   return (
     <>
-      <aside className="fixed left-0 top-0 h-screen w-56 bg-orange-200/80 text-black flex flex-col justify-between overflow-y-auto">
-        {/* Top Section */}
+      <aside
+        className={`fixed top-0 left-0 z-40 h-screen w-56 bg-blue-100 text-black flex flex-col justify-between
+        transform transition-transform duration-300
+        ${isOpen ? "translate-x-0" : "-translate-x-full"}
+        md:translate-x-0`}
+      >
+        {/* Top */}
         <div>
-          {/* Profile Section */}
-          <div className="text-center p-4 border-b border-white/30">
+          {/* Profile */}
+          <div className="text-center p-4 border-b border-white/40">
             <div className="w-16 h-16 rounded-full overflow-hidden mx-auto">
               <img
                 src="https://res.cloudinary.com/djbmyn0fw/image/upload/v1752897230/default-profile_n6tn9o.jpg"
@@ -64,31 +71,46 @@ export default function Sidebar() {
               />
             </div>
             <h3 className="mt-2 text-lg font-semibold">Hi Candidate</h3>
-            <button className="mt-2 border border-black text-black px-3 py-1 rounded-full text-xs cursor-pointer hover:bg-black hover:text-white transition">
+            <button className="mt-2 border border-black px-3 py-1 rounded-full text-xs hover:bg-black hover:text-white transition">
               9500
             </button>
           </div>
 
-          {/* Nav Links */}
+          {/* Links */}
           <div className="p-3 space-y-1">
-            <SideLink to="/" icon={<FaHome />}>Home</SideLink>
-            <SideLink to="/topics" icon={<FaQuestionCircle />}>MCQ</SideLink>
-            <SideLink to="/resources" icon={<FaBook />}>Resources</SideLink>
-            <SideLink to="/job-post" icon={<FaBriefcase />}>Job Post</SideLink>
-            <SideLink to="/calendar" icon={<FaCalendar />}>Calendar</SideLink>
-            <SideLink to="/placement" icon={<FaGraduationCap />}>Placement</SideLink>
+            <SideLink to="/" icon={<FaHome />} onClick={onClose}>
+              Home
+            </SideLink>
+            <SideLink to="/topics" icon={<FaQuestionCircle />} onClick={onClose}>
+              MCQ
+            </SideLink>
+            <SideLink to="/resources" icon={<FaBook />} onClick={onClose}>
+              Resources
+            </SideLink>
+            <SideLink to="/job-post" icon={<FaBriefcase />} onClick={onClose}>
+              Job Post
+            </SideLink>
+            <SideLink to="/calendar" icon={<FaCalendar />} onClick={onClose}>
+              Calendar
+            </SideLink>
+            <SideLink to="/placement" icon={<FaGraduationCap />} onClick={onClose}>
+              Placement
+            </SideLink>
+             <SideLink to="/roadmap" icon={<FaUniversity />} onClick={onClose}>
+              Roadmap
+            </SideLink>
           </div>
         </div>
 
-        {/* Bottom Section */}
-        <div className="p-4 space-y-2 border-t border-white/30">
-          <SideLink to="/settings" icon={<FaCog />}>
+        {/* Bottom */}
+        <div className="p-4 space-y-2 border-t border-white/40">
+          <SideLink to="/settings" icon={<FaCog />} onClick={onClose}>
             Settings
           </SideLink>
-          {/* Use a standard button to trigger the action/popup */}
+
           <button
-            onClick={handleLogoutClick}
-            className="w-full flex items-center gap-2 px-3 py-2 font-bold rounded-lg text-red-600 hover:bg-red-100 transition-colors"
+            onClick={() => setIsLogoutPopupOpen(true)}
+            className="w-full flex items-center gap-2 px-3 py-2 font-bold rounded-lg text-red-600 hover:bg-red-100"
           >
             <FaPowerOff />
             Logout
@@ -96,9 +118,8 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      {/* Conditionally render the LogoutPopup when the state is true */}
       {isLogoutPopupOpen && (
-        <LogoutPopup onClose={handleClosePopup} />
+        <LogoutPopup onClose={() => setIsLogoutPopupOpen(false)} />
       )}
     </>
   );
