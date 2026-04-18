@@ -1,6 +1,6 @@
-export const response = (condition, message, data = {}) => {
+export const response = (status, message, data = {}) => {
     const res = {
-        condition: condition.toUpperCase(),
+        status: status.toUpperCase(),
         message: message,
         data: data
     }

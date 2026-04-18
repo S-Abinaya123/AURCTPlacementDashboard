@@ -4,31 +4,54 @@ import { authService } from '../service/auth.service';
 import VerifyingUserLoading from '../components/loadingComponent/loginPageLoading/VerifyingUserLoading';
 
 const PublicRoute = ({ element }: { element: JSX.Element }) => {
-    const [isValid, setIsValid] = useState<boolean | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     useEffect(() => {
         const verifyToken = async () => {
-        const token = localStorage.getItem('Token');
-        if (!token) return setIsValid(false);
+            const token = localStorage.getItem('Token');
+            
+            if (!token) {
+                setIsAuthenticated(false);
+                setIsLoading(false);
+                return;
+            }
 
-        try {
-            const response = await authService.verifyToken();
-            setIsValid(response.status === 200);
-        } catch (err) {
-            setIsValid(false);
-        }
+            try {
+                await authService.verifyToken();
+                setIsAuthenticated(true);
+            } catch (err) {
+                // Token invalid, clear storage
+                localStorage.removeItem('Token');
+                localStorage.removeItem('userId');
+                localStorage.removeItem('userName');
+                localStorage.removeItem('role');
+                setIsAuthenticated(false);
+            } finally {
+                setIsLoading(false);
+            }
         };
 
         verifyToken();
     }, []);
 
-    if (isValid === null) return <VerifyingUserLoading />;
+    if (isLoading) {
+        return <VerifyingUserLoading />;
+    }
 
-    const role = localStorage.getItem('role');
+    // If already authenticated, redirect to appropriate dashboard
+    if (isAuthenticated) {
+        const role = localStorage.getItem('role');
+        
+        // Use navigate with replace to avoid history issues
+        if (role === 'FACULTY' || role === 'ADMIN') {
+            return <Navigate to="/faculty" replace />;
+        }
+        return <Navigate to="/student" replace />;
+    }
 
-    if(role ==='ADMIN' || role === 'FACULTY') return isValid ? <Navigate to="/faculty/home" replace /> : element;
-    else return isValid ? <Navigate to="/student/home" replace /> : element;
-    
+    // Not authenticated, show the element (login page)
+    return element;
 };
 
 export default PublicRoute;

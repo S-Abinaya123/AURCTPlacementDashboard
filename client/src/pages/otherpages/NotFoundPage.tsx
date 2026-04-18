@@ -19,7 +19,7 @@ export default function NotFoundPage() {
           </p>
           <button
             className="mt-4 px-6 py-3 rounded-2xl bg-[#b97128] text-white font-semibold shadow-md border-2 border-[#68330c] transition-all duration-300 hover:bg-[#8B4513] hover:scale-105"
-            onClick={() => (window.location.href = "/")}
+            onClick={() => (window.location.href = "/auth")}
           >
             Go Back to Dashboard
           </button>

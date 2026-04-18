@@ -5,14 +5,13 @@ import StudentLoginSection from "./section/StudentLoginSection";
 import FacultyLoginSection from "./section/FacultyLoginSection";
 
 import FailToast from "../../components/messages/FailToast";
+import SuccessToast from "../../components/messages/SuccessToast";
 import type { ToastDataType } from "../../types/messageType";
 
 import collegeLogo from "../../assets/mainImage/college-logo.jpeg";
 
 const LoginPage: React.FC = () => {
     const location = useLocation();
-
-    // const isStudent = localStorage.getItem('role') === 'STUDENT' || localStorage.getItem('role') === 'MODERATOR';
     const redirectPath = location.state?.from?.pathname;
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -31,6 +30,7 @@ const LoginPage: React.FC = () => {
 
 
   const [showFailToast, setShowFailToast] = useState(false);
+  const [showSuccessToast, setShowSuccessToast] = useState(false);
   const [toastKey, setToastKey] = useState(0);
   const [toastData, setToastData] = useState<ToastDataType>({
     title: "",
@@ -41,6 +41,12 @@ const LoginPage: React.FC = () => {
     setToastData({ title, message });
     setToastKey((k) => k + 1);
     setShowFailToast(true);
+  };
+
+  const triggerSuccessToast = (title: string, message: string) => {
+    setToastData({ title, message });
+    setToastKey((k) => k + 1);
+    setShowSuccessToast(true);
   };
 
   return (
@@ -100,20 +106,34 @@ const LoginPage: React.FC = () => {
         {tab === "student" ? (
           <StudentLoginSection
             onFail={triggerFailToast}
+            onSuccess={triggerSuccessToast}
             redirectPath={redirectPath}
           />
         ) : (
-          <FacultyLoginSection onFail={triggerFailToast} redirectPath={redirectPath} />
+          <FacultyLoginSection 
+            onFail={triggerFailToast} 
+            onSuccess={triggerSuccessToast}
+            redirectPath={redirectPath} 
+          />
         )}
       </div>
 
-      {/* 🔥 Toast */}
+      {/* 🔥 Fail Toast */}
       <FailToast
-        key={toastKey}
+        key={`fail-${toastKey}`}
         title={toastData.title}
         message={toastData.message}
         show={showFailToast}
         onClose={() => setShowFailToast(false)}
+      />
+
+      {/* 🔥 Success Toast */}
+      <SuccessToast
+        key={`success-${toastKey}`}
+        title={toastData.title}
+        message={toastData.message}
+        show={showSuccessToast}
+        onClose={() => setShowSuccessToast(false)}
       />
     </div>
   );

@@ -1,33 +1,68 @@
-import { useEffect, useState } from 'react';
-import { Navigate, Outlet, useLocation } from 'react-router-dom';
-import { authService } from '../service/auth.service';
-import VerifyingUserLoading from '../components/loadingComponent/loginPageLoading/VerifyingUserLoading';
+import { useEffect, useState, type ReactNode } from "react";
+import { Navigate, Outlet, useLocation } from "react-router-dom";
+import { authService } from "../service/auth.service";
+import VerifyingUserLoading from "../components/loadingComponent/loginPageLoading/VerifyingUserLoading";
 
-const ProtectedRoute = () => {
-    const [isValid, setIsValid] = useState<boolean | null>(null);
-    const location = useLocation();
+interface ProtectedRouteProps {
+  allowedRoles: string[];
+  children?: ReactNode;
+}
 
-    useEffect(() => {
-        const verifyToken = async () => {
-        const token = localStorage.getItem('Token');
-        if (!token) return setIsValid(false);
+const ProtectedRoute = ({ allowedRoles, children }: ProtectedRouteProps) => {
+  const [isValid, setIsValid] = useState<boolean | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const location = useLocation();
 
-        try {
-            const response = await authService.verifyToken();
-            setIsValid(response.status === 200);
-        } catch (err) {
-            setIsValid(false);
-        }
-        };
+  useEffect(() => {
+    const verify = async () => {
+      // First check if token exists synchronously
+      const token = localStorage.getItem("Token");
 
-        verifyToken();
-    }, []);
+      if (!token) {
+        setIsValid(false);
+        return;
+      }
 
-    if (isValid === null) {
-        return <VerifyingUserLoading />;
+      try {
+        const res = await authService.verifyToken();
+        setIsValid(true);
+        setUserRole(res.data.data.role);
+      } catch {
+        // Token invalid, clear storage
+        localStorage.removeItem('Token');
+        localStorage.removeItem('userId');
+        localStorage.removeItem('userName');
+        localStorage.removeItem('role');
+        setIsValid(false);
+      }
+    };
+
+    verify();
+  }, []);
+
+  // Show loading only if we're still verifying
+  if (isValid === null) {
+    return <VerifyingUserLoading />;
+  }
+
+  // Not authenticated, redirect to login
+  if (!isValid) {
+    return <Navigate to="/auth" state={{ from: location }} replace />;
+  }
+
+  // Authenticated but wrong role - redirect to their appropriate dashboard
+  if (allowedRoles && !allowedRoles.includes(userRole || '')) {
+    if (userRole === 'FACULTY' || userRole === 'ADMIN') {
+      return <Navigate to="/faculty" replace />;
     }
+    return <Navigate to="/student" replace />;
+  }
 
-    return isValid ? <Outlet /> : <Navigate to="/auth" state={{ from: location }} replace />;
+  // Render children or Outlet
+  if (children) {
+    return <>{children}</>;
+  }
+  return <Outlet />;
 };
 
 export default ProtectedRoute;

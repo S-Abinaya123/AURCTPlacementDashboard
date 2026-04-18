@@ -1,99 +1,145 @@
-export type Question = {
+﻿// ===============================
+// API Base Configuration
+// ===============================
+
+// Dynamic backend URL
+const getBackendUrl = () => {
+  if (import.meta.env.VITE_BACKEND_URL && !import.meta.env.VITE_BACKEND_URL.includes('localhost')) {
+    return import.meta.env.VITE_BACKEND_URL;
+  }
+  const protocol = window.location.protocol;
+  const hostname = window.location.hostname;
+  let backendPort = '5000';
+  if (import.meta.env.VITE_BACKEND_URL) {
+    const portMatch = import.meta.env.VITE_BACKEND_URL.match(/:(\d+)/);
+    if (portMatch) backendPort = portMatch[1];
+  }
+  return `${protocol}//${hostname}:${backendPort}/api`;
+};
+
+const BASE_URL = getBackendUrl();
+
+async function request<T>(
+  endpoint: string,
+  options?: RequestInit
+): Promise<T> {
+  const response = await fetch(`${BASE_URL}${endpoint}`, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(options?.headers || {}),
+    },
+    ...options,
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => null);
+    throw new Error(errorData?.message || "Something went wrong");
+  }
+
+  return response.json();
+}
+
+// ===============================
+// Type Definitions
+// ===============================
+
+export interface Question {
+  _id?: string;
   question: string;
   options: string[];
   correctAnswer: string;
+}
+
+export interface Quiz {
+  _id?: string;
+  topic: string;
+  time: number;
+  dueDate?: string | null;
+  questions: Question[];
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface Score {
+  _id?: string;
+  quizId: string;
+  topic: string;
+  score: number;
+  total: number;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+// ===============================
+// QUIZ APIs
+// ===============================
+
+// 🔹 Generate quiz (AI / Auto)
+export const generateMCQ = async (data: {
+  topic: string;
+  numberOfQuestions: number;
+}): Promise<Quiz> => {
+  return request<Quiz>("/quizzes/generate-mcq", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
 };
 
-function extractJSON(text: string) {
-  const match = text.match(/<json>([\s\S]*?)<\/json>/);
-  if (!match) throw new Error("JSON wrapper not found");
-  return JSON.parse(match[1]);
-}
+// 🔹 Create quiz manually
+export const createQuiz = async (quiz: {
+  topic: string;
+  time: number;
+  dueDate?: string | null;
+  questions: Question[];
+}): Promise<Quiz> => {
+  return request<Quiz>("/quizzes", {
+    method: "POST",
+    body: JSON.stringify(quiz),
+  });
+};
 
-export async function generateMCQ(topic: string): Promise<Question[]> {
-  const apiKey = import.meta.env.VITE_GROQ_API_KEY;
+// 🔹 Get all quizzes
+export const getQuizzes = async (): Promise<Quiz[]> => {
+  return request<Quiz[]>("/quizzes");
+};
 
-  for (let attempt = 1; attempt <= 3; attempt++) {
-    try {
-      const response = await fetch(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
-          body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
-            temperature: 0.35,
-            max_tokens: 900,
-            messages: [
-              {
-                role: "system",
-                content:
-                  "You generate MCQs strictly by topic. Never mix domains.",
-              },
-              {
-                role: "user",
-                content: `
-Generate EXACTLY 10 MCQ questions ONLY from this topic:
-"${topic}"
+// 🔹 Get quiz by ID
+export const getQuizById = async (id: string): Promise<Quiz> => {
+  return request<Quiz>(`/quizzes/${id}`);
+};
 
-STRICT RULES:
-- Questions must belong ONLY to the topic
-- Never mix domains
-- No explanations
-- No markdown
-- Exactly 4 options
-- correctAnswer must match one option
+// 🔹 Delete quiz
+export const deleteQuiz = async (id: string): Promise<void> => {
+  await request<void>(`/quizzes/${id}`, {
+    method: "DELETE",
+  });
+};
 
-PROGRAMMING TOPICS (Python, C, C++, Java, JavaScript, etc):
-- MUST include code-based questions
-- Include output prediction, error detection, syntax
-- Code may appear in question or options
-- Use \\n for line breaks in code
+// ===============================
+// SCORE APIs
+// ===============================
 
-NON-PROGRAMMING TOPICS:
-- NO code
-- ONLY aptitude / logic / math / verbal
+// 🔹 Save score
+export const saveScore = async (data: {
+  quizId: string;
+  topic: string;
+  score: number;
+  total: number;
+}): Promise<Score> => {
+  return request<Score>("/scores", {
+    method: "POST",
+    body: JSON.stringify(data),
+  });
+};
 
-?? VERY IMPORTANT:
-Wrap the FINAL JSON strictly inside <json> and </json> tags.
-Do NOT put anything outside these tags.
+// 🔹 Get all scores
+export const getScores = async (): Promise<Score[]> => {
+  return request<Score[]>("/scores");
+};
 
-FORMAT:
-<json>
-{
-  "questions": [
-    {
-      "question": "text",
-      "options": ["A","B","C","D"],
-      "correctAnswer": "A"
-    }
-  ]
-}
-</json>
-`
-              }
-            ],
-          }),
-        }
-      );
-
-      if (!response.ok) throw new Error("API error");
-
-      const data = await response.json();
-      const content = data.choices?.[0]?.message?.content;
-      if (!content) throw new Error("Empty response");
-
-      const parsed = extractJSON(content);
-      return parsed.questions;
-    } catch (err) {
-      if (attempt === 3) {
-        throw new Error("Failed to generate quiz");
-      }
-    }
-  }
-
-  throw new Error("Failed to generate quiz");
-}
+// 🔹 Get scores by quiz
+export const getScoresByQuiz = async (
+  quizId: string
+): Promise<Score[]> => {
+  return request<Score[]>(`/scores?quizId=${quizId}`);
+};

@@ -1,7 +1,12 @@
 import { FaBars } from "react-icons/fa";
+import { useContext } from "react";
+import { ThemeContext } from "../context/ThemeContext";
 import darkModeIcon from "../assets/icons/dark-mode.png";
+import lightModeIcon from "../assets/icons/light-mode.png";
 
 export default function Header({ onMenuClick }: any) {
+  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  
   return (
     <header className="h-[56px] flex items-center justify-between px-4 border-b bg-white sticky top-0 z-30">
       
@@ -14,19 +19,21 @@ export default function Header({ onMenuClick }: any) {
           <FaBars />
         </button>
 
-        <h2 className="text-[20px] md:text-[24px] font-extrabold tracking-wide 
-               text-blue-800">
-  EDUGROW - 
-  <span className="text-blue-500">(SMART STUDENT COMPANION)</span>
-</h2>
+        <h2 className="text-[20px] md:text-[24px] font-extrabold tracking-wide text-blue-800">
+          EDUGROW - 
+          <span className="text-blue-500">(SMART STUDENT COMPANION)</span>
+        </h2>
       </div>
 
       {/* RIGHT */}
       <div className="flex items-center gap-4">
         <i className="fas fa-bell text-[18px] cursor-pointer text-blue-500"></i>
 
-        <button className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200">
-          <img src={darkModeIcon} alt="theme" className="w-5 h-5" />
+        <button 
+          onClick={toggleDarkMode}
+          className="w-8 h-8 flex items-center justify-center rounded-full bg-gray-200 hover:scale-105 transition"
+        >
+          <img src={darkMode ? lightModeIcon : darkModeIcon} alt="theme" className="w-5 h-5" />
         </button>
       </div>
     </header>

@@ -1,13 +1,10 @@
-import React, { useState } from "react";
-
-import { NavLink } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { NavLink, useLocation } from "react-router-dom";
 import {
   FaHome,
   FaQuestionCircle,
   FaBook,
-  FaBriefcase,
   FaCalendar,
-  FaGraduationCap,
   FaCog,
   FaPowerOff,
   FaUniversity,
@@ -29,12 +26,11 @@ const SideLink = ({
     to={to}
     onClick={onClick}
     className={({ isActive }) =>
-      `flex items-center gap-2 px-3 py-2 font-bold rounded-lg transition-colors
-       ${
-         isActive
-           ? "bg-blue-700 text-white"
-           : "text-black hover:bg-blue-600 hover:text-white"
-       }`
+      `flex items-center gap-2 px-3 py-2 font-bold rounded-lg transition-colors ${
+        isActive
+          ? "bg-blue-700 text-white"
+          : "text-black hover:bg-blue-600 hover:text-white"
+      }`
     }
   >
     {icon}
@@ -50,59 +46,114 @@ export default function Sidebar({
   onClose: () => void;
 }) {
   const [isLogoutPopupOpen, setIsLogoutPopupOpen] = useState(false);
+  const [userName, setUserName] = useState<string>("Candidate");
+  const [registerNo, setRegisterNo] = useState<string>("");
+  const [profilePicture, setProfilePicture] = useState<string>("");
+  const location = useLocation();
+
+  // Check if we're on any MCQ-related page
+  const isMcqActive = location.pathname.startsWith("/student/topics") || 
+                      location.pathname.startsWith("/student/exam") || 
+                      location.pathname.startsWith("/student/result");
+
+  // Check if we're on home page (root "/" or student "/student")
+  const isHomeActive = location.pathname === "/" || location.pathname === "/student";
+
+  useEffect(() => {
+    const loadUserData = () => {
+      const storedUserName = localStorage.getItem('userName');
+      const storedRegisterNo = localStorage.getItem('registerNo');
+      const storedProfilePicture = localStorage.getItem('profilePicture');
+      
+      if (storedUserName) {
+        setUserName(storedUserName);
+      }
+      if (storedRegisterNo) {
+        setRegisterNo(storedRegisterNo);
+      }
+      if (storedProfilePicture) {
+        setProfilePicture(storedProfilePicture);
+      }
+    };
+
+    loadUserData();
+
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'userName' || e.key === 'registerNo' || e.key === 'profilePicture') {
+        loadUserData();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+
+    const handleUserUpdate = () => loadUserData();
+    window.addEventListener('userUpdated', handleUserUpdate);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('userUpdated', handleUserUpdate);
+    };
+  }, []);
 
   return (
     <>
       <aside
-        className={`fixed top-0 left-0 z-40 h-screen w-56 bg-blue-100 text-black flex flex-col justify-between
-        transform transition-transform duration-300
-        ${isOpen ? "translate-x-0" : "-translate-x-full"}
-        md:translate-x-0`}
+        className={`fixed top-0 left-0 z-40 h-screen w-56 bg-blue-100 text-black flex flex-col justify-between transform transition-transform duration-300 ${
+          isOpen ? "translate-x-0" : "-translate-x-full"
+        } md:translate-x-0`}
       >
-        {/* Top */}
         <div>
-          {/* Profile */}
           <div className="text-center p-4 border-b border-white/40">
             <div className="w-16 h-16 rounded-full overflow-hidden mx-auto">
               <img
-                src="https://res.cloudinary.com/djbmyn0fw/image/upload/v1752897230/default-profile_n6tn9o.jpg"
+                src={profilePicture || "https://res.cloudinary.com/djbmyn0fw/image/upload/v1752897230/default-profile_n6tn9o.jpg"}
                 alt="profile"
                 className="w-full h-full object-cover"
               />
             </div>
-            <h3 className="mt-2 text-lg font-semibold">Hi Candidate</h3>
+            <h3 className="mt-2 text-lg font-semibold">Hi {userName}</h3>
             <button className="mt-2 border border-black px-3 py-1 rounded-full text-xs hover:bg-black hover:text-white transition">
-              9500
+              {registerNo || "Candidate"}
             </button>
           </div>
 
-          {/* Links */}
           <div className="p-3 space-y-1">
-            <SideLink to="/" icon={<FaHome />} onClick={onClose}>
+            <NavLink
+              to="/"
+              onClick={onClose}
+              className={`flex items-center gap-2 px-3 py-2 font-bold rounded-lg transition-colors ${
+                isHomeActive
+                  ? "bg-blue-700 text-white"
+                  : "text-black hover:bg-blue-600 hover:text-white"
+              }`}
+            >
+              <FaHome />
               Home
-            </SideLink>
-            <SideLink to="/topics" icon={<FaQuestionCircle />} onClick={onClose}>
+            </NavLink>
+            <NavLink
+              to="/student/topics"
+              onClick={onClose}
+              className={`flex items-center gap-2 px-3 py-2 font-bold rounded-lg transition-colors ${
+                isMcqActive
+                  ? "bg-blue-700 text-white"
+                  : "text-black hover:bg-blue-600 hover:text-white"
+              }`}
+            >
+              <FaQuestionCircle />
               MCQ
-            </SideLink>
-            <SideLink to="/resources" icon={<FaBook />} onClick={onClose}>
+            </NavLink>
+            <SideLink to="/student/resources" icon={<FaBook />} onClick={onClose}>
               Resources
             </SideLink>
-            <SideLink to="/job-post" icon={<FaBriefcase />} onClick={onClose}>
-              Job Post
-            </SideLink>
-            <SideLink to="/calendar" icon={<FaCalendar />} onClick={onClose}>
+            <SideLink to="/student/calendar" icon={<FaCalendar />} onClick={onClose}>
               Calendar
             </SideLink>
-            <SideLink to="/placement" icon={<FaGraduationCap />} onClick={onClose}>
-              Placement
-            </SideLink>
-             <SideLink to="/roadmap" icon={<FaUniversity />} onClick={onClose}>
-              Roadmap
+            <SideLink to="/student/roadmap" icon={<FaUniversity />} onClick={onClose}>
+              Company Roadmap
             </SideLink>
           </div>
         </div>
 
-        {/* Bottom */}
         <div className="p-4 space-y-2 border-t border-white/40">
           <SideLink to="/settings" icon={<FaCog />} onClick={onClose}>
             Settings

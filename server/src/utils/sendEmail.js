@@ -55,7 +55,9 @@ try {
 }
 
 const transporter = nodemailer.createTransport({
-  service: "gmail",
+  host: process.env.SMTP_HOST || "smtp.gmail.com",
+  port: parseInt(process.env.SMTP_PORT) || 587,
+  secure: parseInt(process.env.SMTP_PORT) === 465, // true for 465, false for 587
   auth: {
     user: process.env.EMAIL_USER,
     pass: process.env.EMAIL_PASS,
@@ -152,7 +154,7 @@ export const sendPasswordResetEmail = async ({
 
 export const sendWelcomeEmail = async ({ to, name }) => {
   try {
-	const today = new Date();
+  	const today = new Date();
     const formattedDate = today.toLocaleDateString("en-GB", {
       day: "2-digit",
       month: "short",
@@ -160,7 +162,7 @@ export const sendWelcomeEmail = async ({ to, name }) => {
     });
     const placeholders = {
       name,
-	  date: formattedDate,
+ 	  date: formattedDate,
       year: new Date().getFullYear(),
     };
 
@@ -184,6 +186,58 @@ export const sendWelcomeEmail = async ({ to, name }) => {
     return { success: true, messageId: info.messageId };
   } catch (error) {
     console.error("Error sending welcome email:", error.message);
+    return { success: false, error: error.message };
+  }
+};
+
+export const sendInterviewReminderEmail = async ({ to, companyName, role, interviewDate, description, jobLink, icsFilePath }) => {
+  try {
+    const formattedDate = new Date(interviewDate).toLocaleDateString("en-GB", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const subject = `Interview Reminder: ${companyName} - ${role}`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #1e40af;">Interview Reminder</h2>
+        <p>You have an upcoming interview:</p>
+        <div style="background: #f3f4f6; padding: 15px; border-radius: 8px; margin: 15px 0;">
+          <p style="margin: 5px 0;"><strong>Company:</strong> ${companyName}</p>
+          <p style="margin: 5px 0;"><strong>Role:</strong> ${role}</p>
+          <p style="margin: 5px 0;"><strong>Date:</strong> ${formattedDate}</p>
+          ${description ? `<p style="margin: 5px 0;"><strong>Description:</strong> ${description}</p>` : ''}
+          ${jobLink ? `<p style="margin: 5px 0;"><strong>Job Link:</strong> <a href="${jobLink}" style="color: #1e40af;">View Job</a></p>` : ''}
+        </div>
+        <p style="color: #16a34a; font-weight: bold;">📅 The interview has been automatically added to your Google Calendar!</p>
+        <p style="color: #6b7280; font-size: 12px; margin-top: 20px;">
+          If the calendar event was not added automatically, please download the attached file and import it to your calendar.
+        </p>
+      </div>
+    `;
+
+    let mailOptions = {
+      from: `"Placement Portal" <${process.env.EMAIL_USER}>`,
+      to,
+      subject,
+      html,
+    };
+
+    if (icsFilePath && fs.existsSync(icsFilePath)) {
+      mailOptions.attachments = [{
+        filename: `${companyName.replace(/\s+/g, '_')}_interview.ics`,
+        path: icsFilePath,
+      }];
+    }
+
+    const info = await transporter.sendMail(mailOptions);
+    console.log("Interview reminder email sent:", info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending interview reminder email:", error.message);
     return { success: false, error: error.message };
   }
 };

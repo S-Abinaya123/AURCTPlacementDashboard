@@ -1,134 +1,145 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+
 import { isValidRegisterNo } from "../../../utils/validation";
 import { authService } from "../../../service/auth.service";
 import LoginLoading from "../../../components/loadingComponent/loginPageLoading/LoginLoading";
-
-import CreateUserPopup from "../../../components/loginPageComponent/CreateUserPopup";
+import StudentResetPassword from "../../../components/loginPageComponent/StudentResetPassword";
 
 type Props = {
-    onFail: (title: string, message: string) => void;
-    redirectPath: string;  
+  onFail: (title: string, message: string) => void;
+  onSuccess: (title: string, message: string) => void;
+  redirectPath: string;
 };
 
 const StudentLoginSection: React.FC<Props> = ({
   onFail,
-  redirectPath
+  onSuccess,
+  redirectPath,
 }) => {
-    const navigate = useNavigate();
-
-    const [loginLoading, setLoginLoading] = useState<boolean>(false);
-
-    const [showCreatePopup, setShowCreatePopup] = useState<boolean>(false);
+  const navigate = useNavigate();
 
   const [registerNo, setRegisterNo] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [loginLoading, setLoginLoading] = useState(false);
+  const [showResetPassword, setShowResetPassword] = useState(false);
 
-    const handleLogin = async (e: React.FormEvent) => {
-        e.preventDefault();
+  const handleLogin = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        if (!isValidRegisterNo(registerNo.trim())) {
-            onFail("Login Failed", "Enter a valid register number.");
-            return;
-        }
+    const regNo = registerNo.trim();
+    const pwd = password.trim();
 
-        if (!password.trim()) {
-            onFail("Login Failed", "Enter your password.");
-            return;
-        }
-        try {
-            setLoginLoading(true);
-            const response = await authService.login({
-                registerNo: registerNo.trim(),
-                password: password.trim(),
-                role: 'STUDENT'
-            });
-            const data = response.data.data;
-            setLoginLoading(false);
-            if(response.status === 200) {
-                localStorage.setItem('Token', data.token);
-                localStorage.setItem('userId', data.userId);
-                localStorage.setItem('profilePicture', data.profilePicture);
-                localStorage.setItem('userName', data.userName);
-                localStorage.setItem('role', data.role);
-                navigate(redirectPath || '/student/home');
-            }
-        }
-        catch(err: any) {
-            setLoginLoading(false);
-            if (err.response) {
-            if (err.response.status === 401) {
-                onFail("Invalid credentials", "Check your credentials");
-            } else {
-                onFail(
-                "Login Failed",
-                err.response.data?.message || "Something went wrong"
-                );
-            }
-            } else {
-            // Network / CORS / server down
-            onFail("Network Error", "Please try again later");
-            }
-        }
-        finally { setLoginLoading(false); }
-    };
+    if (!isValidRegisterNo(regNo)) {
+      onFail("Login Failed", "Enter a valid register number.");
+      return;
+    }
+
+    if (!pwd) {
+      onFail("Login Failed", "Enter your password.");
+      return;
+    }
+
+    try {
+      setLoginLoading(true);
+
+      const response = await authService.login({
+        registerNo: regNo,
+        password: pwd,
+        role: "STUDENT",
+      });
+
+      if (
+        response.status === 200 &&
+        response.data.status === "SUCCESS"
+      ) {
+        // Auth service now handles storing all user data
+        window.dispatchEvent(new Event("userUpdated"));
+
+        // Navigate to student dashboard
+        navigate("/student");
+      } else {
+        onFail(
+          "Login Failed",
+          response.data.message || "Invalid credentials"
+        );
+      }
+    } catch (err: any) {
+      console.error(err);
+
+      if (err.response?.status === 401) {
+        onFail("Invalid Credentials", "Check register number or password");
+      } else if (err.response) {
+        onFail(
+          "Login Failed",
+          err.response.data?.message || "Server error"
+        );
+      } else {
+        onFail("Network Error", "Server not reachable");
+      }
+    } finally {
+      setLoginLoading(false);
+    }
+  };
 
   return (
     <form onSubmit={handleLogin} className="space-y-5">
+      {/* Register Number */}
       <input
         type="text"
         placeholder="Register Number"
         value={registerNo}
         onChange={(e) => setRegisterNo(e.target.value)}
-        className="w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
+        className="w-full p-3 rounded-lg bg-white border border-gray-300"
       />
 
+      {/* Password */}
       <div className="relative">
         <input
           type={showPassword ? "text" : "password"}
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="w-full p-3 rounded-lg bg-white border border-gray-300 focus:border-blue-600 focus:ring-2 focus:ring-blue-200 outline-none"
+          className="w-full p-3 rounded-lg bg-white border border-gray-300"
         />
 
         <button
           type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+          onClick={() => setShowPassword((prev) => !prev)}
+          className="absolute right-3 top-1/2 -translate-y-1/2"
         >
           {showPassword ? <FaEyeSlash /> : <FaEye />}
         </button>
       </div>
 
-      <div className="text-right">
-        <button className="text-sm text-blue-600 hover:underline cursor-pointer">
-          Forgot Password?
-        </button>
-      </div>
-
+      {/* Login Button */}
       <button
         type="submit"
-        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-800"
       >
         Log In
       </button>
 
+      {/* Reset Password */}
       <p className="text-center text-sm text-gray-500">
-        New student?{" "}
+        Forgot your password?{" "}
         <span
-          onClick={() => setShowCreatePopup(true)}
-          className="text-blue-600 font-medium cursor-pointer hover:underline"
+          onClick={() => setShowResetPassword(true)}
+          className="text-blue-600 cursor-pointer hover:underline"
         >
-          Create account
+          Reset password
         </span>
       </p>
-      { loginLoading && <LoginLoading /> }
 
-      {showCreatePopup && (
-        <CreateUserPopup onFail={onFail} onClose={() => setShowCreatePopup(false)} />
+      {loginLoading && <LoginLoading />}
+
+      {showResetPassword && (
+        <StudentResetPassword
+          onClose={() => setShowResetPassword(false)}
+          onSuccess={onSuccess}
+        />
       )}
     </form>
   );

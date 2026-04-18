@@ -28,29 +28,29 @@ const LogoutPopup: React.FC<LogoutPopupProps> = ({ onClose }) => {
   return (
     // Fixed overlay...
     <div 
-      className="fixed inset-0 bg-black/30 flex justify-center items-center animate-fadeIn z-50"
+      className="fixed inset-0 bg-black/30 dark:bg-black/60 flex justify-center items-center animate-fadeIn z-50"
       onClick={onClose}
     >
       <div 
-        className="w-[440px] bg-white p-[25px_30px_30px] rounded-[16px] shadow-[0_12px_35px_rgba(0,0,0,0.18)] relative animate-slideUp"
+        className="w-[440px] bg-white dark:bg-slate-800 p-[25px_30px_30px] rounded-[16px] shadow-[0_12px_35px_rgba(0,0,0,0.18)] relative animate-slideUp"
         onClick={(e) => e.stopPropagation()} 
       >
         <button 
           onClick={onClose}
-          className="absolute top-[12px] right-[15px] text-[20px] text-[#777] cursor-pointer transition duration-200 border-none bg-none hover:text-[#222]"
+          className="absolute top-[12px] right-[15px] text-[20px] text-[#777] dark:text-gray-400 cursor-pointer transition duration-200 border-none bg-none hover:text-[#222] dark:hover:text-white"
         >
           &times;
         </button>
 
-        <h2 className="text-[22px] font-bold mt-[25px] mb-[10px] text-[#1c1e21]">Logout Confirmation</h2>
-        <p className="text-[15px] text-[#555] mb-[28px] leading-[1.5]">
+        <h2 className="text-[22px] font-bold mt-[25px] mb-[10px] text-[#1c1e21] dark:text-white">Logout Confirmation</h2>
+        <p className="text-[15px] text-[#555] dark:text-gray-300 mb-[28px] leading-[1.5]">
           Are you sure you want to log out of your account?
         </p>
 
         <div className="flex justify-end gap-[12px]">
           <button 
             onClick={onClose} 
-            className="px-[22px] py-[11px] rounded-[8px] font-semibold text-[14px] cursor-pointer transition duration-200 border-none bg-[#f0f2f5] text-[#333] hover:bg-[#e1e3e7]"
+            className="px-[22px] py-[11px] rounded-[8px] font-semibold text-[14px] cursor-pointer transition duration-200 border-none bg-[#f0f2f5] dark:bg-slate-700 dark:text-gray-200 text-[#333] hover:bg-[#e1e3e7] dark:hover:bg-slate-600"
           >
             Cancel
           </button>

@@ -1,0 +1,317 @@
+/* Theme toggle - Light mode by default, add 'dark' class to html for dark mode */
+
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+  --text-primary: #111827;
+  --text-secondary: #374151;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --card-bg: #ffffff;
+  --input-bg: #ffffff;
+  --icon-red: #dc2626;
+  --icon-green: #16a34a;
+  --icon-orange: #ea580c;
+  --icon-purple: #9333ea;
+  --icon-gray: #6b7280;
+}
+
+html.dark {
+  --bg-primary: #1f2937;
+  --bg-secondary: #111827;
+  --bg-tertiary: #374151;
+  --text-primary: #f9fafb;
+  --text-secondary: #e5e7eb;
+  --text-muted: #9ca3af;
+  --border-color: #4b5563;
+  --card-bg: #1f2937;
+  --input-bg: #374151;
+  --icon-red: #f87171;
+  --icon-green: #4ade80;
+  --icon-orange: #fb923c;
+  --icon-purple: #c084fc;
+  --icon-gray: #d1d5db;
+}
+
+html.dark body {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Ensure html and body take full height */
+html, body {
+  min-height: 100vh;
+}
+
+/* Apply CSS variables to common elements */
+html.dark .bg-white,
+html.dark [class*="bg-white"] {
+  background-color: var(--card-bg) !important;
+}
+
+html.dark .bg-gray-50,
+html.dark [class*="bg-gray-50"] {
+  background-color: var(--bg-secondary) !important;
+}
+
+html.dark .bg-gray-100,
+html.dark [class*="bg-gray-100"] {
+  background-color: var(--bg-tertiary) !important;
+}
+
+html.dark,
+html.dark body,
+html.dark * {
+  color: var(--text-primary) !important;
+}
+
+html.dark .text-gray-800,
+html.dark .text-gray-700,
+html.dark .text-gray-600,
+html.dark .text-gray-500 {
+  color: var(--text-primary) !important;
+}
+
+html.dark .text-gray-400 {
+  color: var(--text-muted) !important;
+}
+
+html.dark .border,
+html.dark [class*="border"] {
+  border-color: var(--border-color) !important;
+}
+
+html.dark .border-b {
+  border-color: var(--border-color) !important;
+}
+
+html.dark input,
+html.dark textarea,
+html.dark select {
+  background-color: var(--input-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--border-color) !important;
+}
+
+/* Header and sidebar */
+html.dark header {
+  background-color: var(--card-bg) !important;
+}
+
+html.dark aside {
+  background-color: var(--card-bg) !important;
+}
+
+/* Sidebar blue to dark blue */
+html.dark aside.bg-blue-100 {
+  background-color: #1e3a5f !important;
+}
+
+html.dark .text-blue-800 {
+  color: #60a5fa !important;
+}
+
+html.dark .text-blue-500 {
+  color: #93c5fd !important;
+}
+
+/* Fix button text visibility in dark mode */
+html.dark button {
+  color: #ffffff !important;
+}
+
+html.dark button:hover {
+  opacity: 0.9;
+}
+
+/* Fix input placeholder in dark mode */
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Fix card shadows in dark mode */
+html.dark .shadow-md,
+html.dark .shadow-lg,
+html.dark .shadow {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Fix hover states for interactive elements */
+html.dark .hover\:bg-gray-100:hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Fix bg-gray-200 to be visible in dark mode */
+html.dark .bg-gray-200 {
+  background-color: #4b5563 !important;
+}
+
+/* Fix specific button hover issues */
+html.dark button.bg-gray-200:hover,
+html.dark .bg-gray-200:hover {
+  background-color: #6b7280 !important;
+}
+
+/* Ensure text on colored backgrounds is visible */
+html.dark .bg-blue-600,
+html.dark .bg-green-600,
+html.dark .bg-red-500,
+html.dark .bg-blue-500 {
+  color: #ffffff !important;
+}
+
+/* Fix text visibility on hover buttons */
+html.dark button:not([class*="bg-"]):hover {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Fix file type icon colors in dark mode */
+/* PDF icon - red */
+html.dark .text-red-600,
+html.dark [class*="text-red-"] {
+  color: var(--icon-red) !important;
+}
+
+html.dark .bg-red-100,
+html.dark [class*="bg-red-100"] {
+  background-color: rgba(220, 38, 38, 0.2) !important;
+}
+
+/* Excel/green icon */
+html.dark .text-green-600,
+html.dark [class*="text-green-"] {
+  color: var(--icon-green) !important;
+}
+
+html.dark .bg-green-100,
+html.dark [class*="bg-green-100"] {
+  background-color: rgba(22, 163, 74, 0.2) !important;
+}
+
+/* PowerPoint/orange icon */
+html.dark .text-orange-600,
+html.dark [class*="text-orange-"] {
+  color: var(--icon-orange) !important;
+}
+
+html.dark .bg-orange-100,
+html.dark [class*="bg-orange-100"] {
+  background-color: rgba(234, 88, 12, 0.2) !important;
+}
+
+/* Image/purple icon */
+html.dark .text-purple-600,
+html.dark [class*="text-purple-"] {
+  color: var(--icon-purple) !important;
+}
+
+html.dark .bg-purple-100,
+html.dark [class*="bg-purple-100"] {
+  background-color: rgba(147, 51, 234, 0.2) !important;
+}
+
+/* File/gray icon */
+html.dark .text-gray-600,
+html.dark [class*="text-gray-600"] {
+  color: var(--icon-gray) !important;
+}
+
+html.dark .bg-gray-100,
+html.dark [class*="bg-gray-100"] {
+  background-color: rgba(107, 114, 128, 0.2) !important;
+}
+
+/* Fix "completed" text and similar labels */
+html.dark .bg-green-100 {
+  background-color: rgba(22, 163, 74, 0.2) !important;
+}
+
+html.dark .text-green-700,
+html.dark .text-green-600 {
+  color: var(--icon-green) !important;
+}
+
+/* Fix any full white text issues */
+html.dark .text-white {
+  color: #ffffff !important;
+}
+
+/* Fix blue text visibility */
+html.dark .text-blue-600,
+html.dark .text-blue-700 {
+  color: #60a5fa !important;
+}
+
+html.dark .bg-blue-100 {
+  background-color: rgba(37, 99, 235, 0.2) !important;
+}
+
+/* Fix slate backgrounds */
+html.dark .bg-slate-100 {
+  background-color: var(--bg-secondary) !important;
+}
+
+html.dark .bg-slate-50 {
+  background-color: var(--bg-tertiary) !important;
+}
+
+/* Fix slate text colors */
+html.dark .text-slate-800,
+html.dark .text-slate-700,
+html.dark .text-slate-600 {
+  color: var(--text-primary) !important;
+}
+
+/* Fix blue-900 text */
+html.dark .text-blue-900 {
+  color: #93c5fd !important;
+}
+
+/* Fix gradient backgrounds */
+html.dark .from-yellow-50 {
+  --tw-gradient-from: #374151 !important;
+}
+
+html.dark .from-green-50 {
+  --tw-gradient-from: #374151 !important;
+}
+
+html.dark .to-orange-50,
+html.dark .to-gray-50 {
+  --tw-gradient-to: #1f2937 !important;
+}
+
+/* Fix gradient overlays */
+html.dark .from-white {
+  --tw-gradient-from: var(--card-bg) !important;
+}
+
+html.dark .to-transparent {
+  --tw-gradient-to: transparent !important;
+}
+
+/* Fix blue-indigo gradient backgrounds */
+html.dark .from-blue-50 {
+  --tw-gradient-from: #374151 !important;
+}
+
+html.dark .to-indigo-50 {
+  --tw-gradient-to: #1f2937 !important;
+}
+
+html.dark .hover\\:from-blue-100:hover,
+html.dark [hover]:hover .from-blue-100 {
+  --tw-gradient-from: #4b5563 !important;
+}
+
+html.dark .hover\\:to-indigo-100:hover,
+html.dark [hover]:hover .to-indigo-100 {
+  --tw-gradient-to: #374151 !important;
+}
+
+/* Fix border colors */
+html.dark .border-blue-500 {
+  border-color: #60a5fa !important;
+}
