@@ -5,7 +5,6 @@ import User from "../models/userModels.js";
 
 export const uploadStudents = async (req, res) => {
   try {
-
     if (!req.file) {
       return res.status(400).json({
         status: "ERROR",
@@ -14,7 +13,6 @@ export const uploadStudents = async (req, res) => {
     }
 
     const workbook = xlsx.read(req.file.buffer, { type: "buffer" });
-
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
 
@@ -25,92 +23,100 @@ export const uploadStudents = async (req, res) => {
     let errors = [];
 
     for (const row of studentsData) {
-
       try {
-
         console.log("Processing row:", row);
-        console.log("Department from Excel:", row.department || row.Department);
-        
-        // Handle both lowercase and uppercase column names from Excel
-        // Use Excel value if available, otherwise fall back to form data from dropdown
-        const deptValue = row.department || row.Department || req.formDepartment || "";
+
+        // Normalize values
+        const regNo = String(
+          row.registerNo ||
+          row.RegisterNo ||
+          row["Register No"] ||
+          row.registerNumber ||
+          ""
+        ).trim();
+
+        const email = String(row.email || row.Email || "").trim();
+        const mobileNo = String(
+          row.mobileNo || row.MobileNo || row.mobile || row.Mobile || ""
+        ).trim();
+
+        const deptValue =
+          row.department || row.Department || req.formDepartment || "";
+
         const yearValue = row.year || row.Year || req.formYear || "";
         const batchValue = row.batch || row.Batch || req.formBatch || "";
-        
+
+        // Validate
+        if (!regNo) {
+          throw new Error("Register number missing");
+        }
+
         const student = {
           userName: row.userName || row.Name || row.studentName || "",
-          registerNo: row.registerNo || row.RegisterNo || row['Register No'] || row.registerNumber || "",
-          email: row.email || row.Email || "",
-          mobileNo: row.mobileNo || row.MobileNo || row.mobile || row.Mobile || "",
+          registerNo: regNo,
+          email,
+          mobileNo,
           department: deptValue,
-          year: typeof yearValue === 'number' ? yearValue : (yearValue ? parseInt(yearValue) : null),
+          year:
+            typeof yearValue === "number"
+              ? yearValue
+              : yearValue
+              ? parseInt(yearValue)
+              : null,
           batch: batchValue
         };
 
-        const existing = await Student.findOne({
-          registerNo: student.registerNo
-        });
+        // Check if student exists
+        const existing = await Student.findOne({ registerNo: regNo });
+
+        // Hash password once
+        const hashedPassword = await bcrypt.hash(regNo, 10);
 
         if (existing) {
-
+          // ✅ Update student
           await Student.updateOne(
-            { registerNo: student.registerNo },
+            { registerNo: regNo },
             { $set: student }
           );
 
-          // Also update user in User collection if exists
-          await User.updateOne(
-            { registerNo: student.registerNo, role: "STUDENT" },
-            { 
-              $set: {
-                userName: student.userName,
-                email: student.email,
-                department: student.department,
-                year: student.year,
-                batch: student.batch
-              }
-            }
-          );
-
           updated++;
-
         } else {
-
+          // ✅ Create student
           await Student.create(student);
+          added++;
+        }
 
-          // Also create user in User collection for login
-          // Default password is the register number (student should change it)
-          const salt = await bcrypt.genSalt(10);
-          const hashedPassword = await bcrypt.hash(student.registerNo, salt);
-          await User.findOneAndUpdate(
-            { registerNo: student.registerNo },
-            {
+        // ✅ ALWAYS ensure user exists (important fix)
+        await User.updateOne(
+          { registerNo: regNo, role: "STUDENT" },
+          {
+            $set: {
               userName: student.userName,
-              registerNo: student.registerNo,
               email: student.email,
-              password: hashedPassword, // Default password is register number (hashed)
-              role: "STUDENT",
               department: student.department,
               year: student.year,
               batch: student.batch,
               mobileNo: student.mobileNo
             },
-            { upsert: true }
-          );
-
-          added++;
-
-        }
+            $setOnInsert: {
+              registerNo: regNo,
+              role: "STUDENT",
+              password: hashedPassword
+            }
+          },
+          {
+            upsert: true
+          }
+        );
 
       } catch (err) {
+        console.error("ROW ERROR:", err.message);
 
         errors.push({
           registerNo: row.registerNo,
           error: err.message
         });
-
       }
-
     }
 
     res.status(200).json({
@@ -123,13 +129,11 @@ export const uploadStudents = async (req, res) => {
     });
 
   } catch (error) {
-
-    console.error(error);
+    console.error("UPLOAD ERROR:", error);
 
     res.status(500).json({
       status: "ERROR",
       message: "Upload failed"
     });
-
   }
 };

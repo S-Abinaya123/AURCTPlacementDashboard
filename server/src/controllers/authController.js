@@ -60,6 +60,8 @@ export const login = async (req, res) => {
 
     console.log("Comparing passwords with bcrypt");
     const isMatch = await bcrypt.compare(password, user.password);
+    console.log(password, user.password); // Log the plaintext and hashed passwords
+    console.log("Password match result:", isMatch);
     if (!isMatch) {
       return res
         .status(401)
@@ -153,11 +155,13 @@ export const requestPasswordReset = async (req, res) => {
 
     // Generate 6-digit OTP
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
-    
+
     // Save OTP and expiration (10 minutes)
-    user.resetOtp = otp;
-    user.resetOtpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
-    await user.save();
+
+    await User.updateOne({ _id: user._id }, {
+      resetOtp: otp,
+      resetOtpExpires: new Date(Date.now() + 10 * 60 * 1000)
+    });
 
     // Send OTP via email
     const emailResult = await sendOtpEmail({
