@@ -1,9 +1,0 @@
-{
-  "name": "my-express-api",
-  "main": "src/server.js",
-  "compatibility_date": "2026-04-25",
-  "compatibility_flags": [
-    "nodejs_compat",
-    "enable_nodejs_http_server_modules"
-  ]
-}
