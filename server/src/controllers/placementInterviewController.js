@@ -2,8 +2,7 @@ import PlacementInterview from "../models/PlacementInterview.js";
 import { response } from "../utils/response.js";
 import fs from "fs";
 import { createNotification } from "./notificationController.js";
-import { saveICSFile } from "../utils/calendarUtils.js";
-
+import { getICSContent } from "../utils/calendarUtils.js";
 // Create a new placement interview
 export const createPlacementInterview = async (req, res) => {
   try {
@@ -58,7 +57,7 @@ export const createPlacementInterview = async (req, res) => {
     // Generate ICS file for calendar (auto-added to Google Calendar)
     let icsFileUrl = "";
     try {
-      icsFileUrl = await saveICSFile(newPlacement);
+      icsFileUrl = await getICSContent(newPlacement);
       newPlacement.icsFileUrl = icsFileUrl;
       await newPlacement.save();
       console.log("ICS file saved:", icsFileUrl);
