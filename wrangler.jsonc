@@ -1,5 +1,5 @@
 {
-  "name": "my-express-api",
+  "name": "aurct",
   "main": "server/src/server.js",
   "compatibility_date": "2026-04-25",
   "compatibility_flags": [
