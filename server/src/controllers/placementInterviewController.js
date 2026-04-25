@@ -2,7 +2,6 @@
 // import { response } from "../utils/response.js";
 // import fs from "fs";
 // import { createNotification } from "./notificationController.js";
-// import { saveICSFile } from "../utils/calendarUtils.js";
 
 // // Create a new placement interview
 // export const createPlacementInterview = async (req, res) => {
