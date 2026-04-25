@@ -5,5 +5,10 @@
   "compatibility_flags": [
     "nodejs_compat",
     "enable_nodejs_http_server_modules"
-  ]
+  ],
+  "build": {
+    "upload": {
+      "format": "modules"
+    }
+  }
 }
