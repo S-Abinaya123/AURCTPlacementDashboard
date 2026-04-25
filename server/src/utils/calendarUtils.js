@@ -70,4 +70,3 @@ export const saveICSFile = async (interview) => {
   // Return absolute path for nodemailer attachment
   return path.resolve(filePath);
 };
-

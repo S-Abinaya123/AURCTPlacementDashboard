@@ -277,4 +277,3 @@ export const downloadICSFile = async (req, res) => {
     res.status(500).json(response("FAILED", "Error downloading calendar file"));
   }
 };
-
