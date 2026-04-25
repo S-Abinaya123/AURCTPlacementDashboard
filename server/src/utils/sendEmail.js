@@ -249,29 +249,31 @@
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 
-// 1. Move HTML Templates into code variables (No fs.readFileSync)
+// 1. Templates remain in global scope (Strings are fine)
 const templates = {
   otp: `<p>Hello {{name}},</p><p>Your OTP is: <b>{{otp}}</b></p><p>Date: {{date}}</p>`,
   reset: `<p>Hello {{name}},</p><p>Click here to reset: <a href="{{resetLink}}">Reset Password</a></p>`,
   welcome: `<p>Hello {{name}},</p><p>Welcome to the Placement Portal 🎉</p>`
 };
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port: parseInt(process.env.SMTP_PORT) || 587,
-  secure: parseInt(process.env.SMTP_PORT) === 465,
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASS,
-  },
-  tls: { rejectUnauthorized: false }
-});
+// 2. Wrap transporter in a function to avoid global scope execution
+const getTransporter = () => {
+  return nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: parseInt(process.env.SMTP_PORT) || 587,
+    secure: parseInt(process.env.SMTP_PORT) === 465,
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASS,
+    },
+    tls: { rejectUnauthorized: false }
+  });
+};
 
 const getFormattedDate = () => new Date().toLocaleDateString("en-GB", {
   day: "2-digit", month: "short", year: "numeric",
 });
 
-// Generic helper to replace placeholders
 const fillTemplate = (html, data) => {
   let final = html;
   for (const key in data) {
@@ -280,8 +282,13 @@ const fillTemplate = (html, data) => {
   return final;
 };
 
+/* =================================
+   EXPORTED EMAIL FUNCTIONS
+================================= */
+
 export const sendOtpEmail = async ({ to, name, registerNo, otp }) => {
   try {
+    const transporter = getTransporter(); // Initialize inside the handler
     const html = fillTemplate(templates.otp, {
       name, registerNo, otp, date: getFormattedDate(), year: new Date().getFullYear()
     });
@@ -295,12 +302,11 @@ export const sendOtpEmail = async ({ to, name, registerNo, otp }) => {
   }
 };
 
-// ... Similar logic for sendPasswordResetEmail and sendWelcomeEmail using 'templates' object ...
-
 export const sendInterviewReminderEmail = async ({ 
   to, companyName, role, interviewDate, description, jobLink, icsContent 
 }) => {
   try {
+    const transporter = getTransporter(); // Initialize inside the handler
     const formattedDate = new Date(interviewDate).toLocaleString("en-GB");
 
     const html = `
@@ -319,11 +325,10 @@ export const sendInterviewReminderEmail = async ({
       html,
     };
 
-    // FIX: Use 'content' instead of 'path' for the .ics file
     if (icsContent) {
       mailOptions.attachments = [{
         filename: `${companyName.replace(/\s+/g, '_')}_interview.ics`,
-        content: icsContent, // The raw ICS string
+        content: icsContent,
         contentType: 'text/calendar',
       }];
     }
