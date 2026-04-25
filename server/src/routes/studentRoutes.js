@@ -3,7 +3,7 @@ import multer from "multer";
 import Student from "../models/studentModel.js";
 import PlacementRecord from "../models/PlacementRecord.js";
 import { uploadStudents } from "../controllers/studentController.js";
-import XLSX from "xlsx";
+import * as XLSX from "xlsx";
 import Result from "../models/Result.js";
 import User from "../models/userModels.js";
 

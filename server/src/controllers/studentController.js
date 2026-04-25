@@ -1,4 +1,4 @@
-import xlsx from "xlsx";
+import * as XLSX from "xlsx";
 import bcrypt from "bcryptjs";
 import Student from "../models/studentModel.js";
 import User from "../models/userModels.js";
