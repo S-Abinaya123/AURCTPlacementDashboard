@@ -76,7 +76,7 @@
 
 //   useEffect(() => {
 //     const details = authService.getUserDetails();
-    
+
 //     if (details.userId) {
 //       setFacultyDetails(details as FacultyDetails);
 //     }
@@ -133,18 +133,18 @@
 //           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
 //             <span>🏆</span> Placements by Department (Top 3 Packages)
 //           </h2>
-          
+
 //           {(() => {
 //             const deptData = leaderboard?.topThreeHighPackage?.reduce((acc, s) => {
 //               acc[s.department] = (acc[s.department] || 0) + 1;
 //               return acc;
 //             }, {} as Record<string, number>) || {};
 //             const chartData = Object.entries(deptData).map(([department, count]) => ({ department, count }));
-            
+
 //             if (chartData.length === 0) {
 //               return <p className="text-gray-500 text-center py-4">No placement data available</p>;
 //             }
-            
+
 //             return (
 //               <>
 //                 <ResponsiveContainer width="100%" height={300}>
@@ -178,18 +178,18 @@
 //           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
 //             <span>📝</span> Quiz Participants by Department
 //           </h2>
-          
+
 //           {(() => {
 //             const deptData = leaderboard?.topFiveQuizRankers?.reduce((acc, r) => {
 //               acc[r.department] = (acc[r.department] || 0) + 1;
 //               return acc;
 //             }, {} as Record<string, number>) || {};
 //             const chartData = Object.entries(deptData).map(([department, count]) => ({ department, count }));
-            
+
 //             if (chartData.length === 0) {
 //               return <p className="text-gray-500 text-center py-4">No quiz data available</p>;
 //             }
-            
+
 //             return (
 //               <>
 //                 <ResponsiveContainer width="100%" height={300}>
@@ -226,14 +226,14 @@
 //           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
 //             <span>⭐</span> Quiz Rankings by Department
 //           </h2>
-          
+
 //           {(() => {
 //             const chartData = Object.entries(leaderboard?.topFiveQuizPerDepartment || {}).map(([department, rankers]) => ({ department, count: rankers.length }));
-            
+
 //             if (chartData.length === 0) {
 //               return <p className="text-gray-500 text-center py-4">No quiz data available</p>;
 //             }
-            
+
 //             return (
 //               <>
 //                 <ResponsiveContainer width="100%" height={300}>
@@ -267,14 +267,14 @@
 //           <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center gap-2">
 //             <span>🎯</span> Placements by Department
 //           </h2>
-          
+
 //           {(() => {
 //             const chartData = Object.entries(leaderboard?.topFivePerDepartment || {}).map(([department, students]) => ({ department, count: students.length }));
-            
+
 //             if (chartData.length === 0) {
 //               return <p className="text-gray-500 text-center py-4">No placement data available</p>;
 //             }
-            
+
 //             return (
 //               <>
 //                 <ResponsiveContainer width="100%" height={300}>
@@ -497,11 +497,16 @@ const FacultyHomePage: React.FC = () => {
   const fetchLeaderboard = async () => {
     try {
       const response = await studentApi.getLeaderboard();
-      if (response.status === "SUCCESS") {
-        setLeaderboard(response.data);
+
+      if (response.status === "SUCCESS" && response.data) {
+        // SAFE: prevents undefined assignment error
+        setLeaderboard(response.data ?? null);
+      } else {
+        setLeaderboard(null);
       }
-    } catch (err) {
-      console.error(err);
+    } catch (error) {
+      console.error("Error fetching leaderboard:", error);
+      setLeaderboard(null);
     } finally {
       setLoading(false);
     }
