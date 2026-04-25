@@ -249,43 +249,17 @@
 
 import nodemailer from "nodemailer";
 
-/**
- * 1. CLOUD-NATIVE TEMPLATES
- * We store these as strings because Cloudflare Workers have no file system 
- * to read .html files from.
- */
+// 1. HARDCODED TEMPLATES (Mandatory for Cloudflare - no FS access)
 const templates = {
-  otp: `
-    <div style="font-family: Arial; padding: 20px;">
-      <h2>Your OTP</h2>
-      <p>Hello {{name}},</p>
-      <p>Your OTP for the Placement Portal is: <b style="font-size: 1.2em;">{{otp}}</b></p>
-      <p>Registration No: {{registerNo}}</p>
-      <p>Date: {{date}}</p>
-      <hr/>
-      <p style="font-size: 0.8em;">© {{year}} AURCT Placement Portal</p>
-    </div>`,
-  reset: `
-    <div style="font-family: Arial; padding: 20px;">
-      <h2>Password Reset</h2>
-      <p>Hello {{name}},</p>
-      <p>Click the link below to reset your password:</p>
-      <a href="{{resetLink}}" style="background: #1e40af; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">Reset Password</a>
-      <p>If you didn't request this, please ignore this email.</p>
-    </div>`,
-  welcome: `
-    <div style="font-family: Arial; padding: 20px;">
-      <h2>Welcome to AURCT 🎉</h2>
-      <p>Hello {{name}},</p>
-      <p>Your account has been successfully created in the Placement Portal.</p>
-      <p>Date: {{date}}</p>
-    </div>`
+  otp: `<p>Hello {{name}},</p><p>Your OTP is: <b>{{otp}}</b></p><p>Date: {{date}}</p>`,
+  reset: `<p>Hello {{name}},</p><p>Click here to reset: <a href="{{resetLink}}">Reset Password</a></p>`,
+  welcome: `<p>Hello {{name}},</p><p>Welcome to the Placement Portal 🎉</p>`
 };
 
 /**
- * 2. TRANSPORTER HELPER
- * This fixes the [code: 10021] error. 
- * We call this INSIDE the functions so crypto operations happen in the request handler.
+ * 2. THE HANDLER PATTERN
+ * We move the transporter inside a function so it only runs 
+ * when a request is active. This bypasses the Global Scope error.
  */
 const getTransporter = () => {
   return nodemailer.createTransport({
@@ -296,18 +270,9 @@ const getTransporter = () => {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS,
     },
-    tls: {
-      rejectUnauthorized: false
-    }
+    tls: { rejectUnauthorized: false }
   });
 };
-
-/**
- * 3. UTILITIES
- */
-const getFormattedDate = () => new Date().toLocaleDateString("en-GB", {
-  day: "2-digit", month: "short", year: "numeric",
-});
 
 const fillTemplate = (html, data) => {
   let final = html;
@@ -318,15 +283,17 @@ const fillTemplate = (html, data) => {
 };
 
 /* =================================
-   EXPORTED EMAIL FUNCTIONS
-================================= */
+   EXPORTED FUNCTIONS
+   ================================= */
 
 export const sendOtpEmail = async ({ to, name, registerNo, otp }) => {
   try {
+    // CRITICAL: Call getTransporter() INSIDE the async function
     const transporter = getTransporter();
+
     const html = fillTemplate(templates.otp, {
-      name, registerNo, otp, 
-      date: getFormattedDate(), 
+      name, registerNo, otp,
+      date: new Date().toLocaleDateString("en-GB"),
       year: new Date().getFullYear()
     });
 
@@ -338,16 +305,54 @@ export const sendOtpEmail = async ({ to, name, registerNo, otp }) => {
     });
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error("OTP Email Error:", error.message);
+    console.error("Email Error:", error.message);
     return { success: false, error: error.message };
   }
 };
 
+export const sendInterviewReminderEmail = async ({
+  to, companyName, role, interviewDate, description, jobLink, icsContent
+}) => {
+  try {
+    const transporter = getTransporter(); // CRITICAL
+
+    const html = `
+      <div style="font-family: Arial; padding: 20px;">
+        <h2 style="color: #1e40af;">Interview Reminder</h2>
+        <p><strong>Company:</strong> ${companyName}</p>
+        <p><strong>Date:</strong> ${new Date(interviewDate).toLocaleString("en-GB")}</p>
+        ${jobLink ? `<p><a href="${jobLink}">View Job</a></p>` : ''}
+      </div>
+    `;
+
+    const mailOptions = {
+      from: `"Placement Portal" <${process.env.EMAIL_USER}>`,
+      to,
+      subject: `Interview Reminder: ${companyName}`,
+      html,
+    };
+
+    if (icsContent) {
+      mailOptions.attachments = [{
+        filename: `${companyName.replace(/\s+/g, '_')}_interview.ics`,
+        content: icsContent,
+        contentType: 'text/calendar',
+      }];
+    }
+
+    const info = await transporter.sendMail(mailOptions);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
+};
+
+// ... Add sendPasswordResetEmail and sendWelcomeEmail following the same pattern ...
 export const sendPasswordResetEmail = async ({ to, name, registerNo, resetLink }) => {
   try {
     const transporter = getTransporter();
     const html = fillTemplate(templates.reset, {
-      name, registerNo, resetLink, 
+      name, registerNo, resetLink,
       year: new Date().getFullYear()
     });
 
@@ -382,8 +387,8 @@ export const sendWelcomeEmail = async ({ to, name }) => {
   }
 };
 
-export const sendInterviewReminderEmail = async ({ 
-  to, companyName, role, interviewDate, description, jobLink, icsContent 
+export const sendInterviewReminderEmail = async ({
+  to, companyName, role, interviewDate, description, jobLink, icsContent
 }) => {
   try {
     const transporter = getTransporter();
