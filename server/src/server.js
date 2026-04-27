@@ -28,7 +28,7 @@ const app = express();
 ================================= */
 app.use(
   cors({
-    origin: true,
+    origin: "https://aurct-placement-dashboard-lju5.vercel.app/",
     credentials: true,
   })
 );
