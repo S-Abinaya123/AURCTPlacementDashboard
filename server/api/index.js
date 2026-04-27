@@ -21,7 +21,11 @@ const app = express();
 /* ================= CORS ================= */
 app.use(
   cors({
-    origin: true, // IMPORTANT for Vercel
+    origin: [
+      "https://aurct-placement-dashboard-4vo1zx81e-aurct12-7196s-projects.vercel.app",
+      "https://aurct-placement-dashboard-lju5.vercel.app"
+    ],
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     credentials: true,
   })
 );
