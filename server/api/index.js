@@ -74,8 +74,9 @@ const connectDB = async () => {
   console.log("MongoDB Connected");
 };
 
-/* ================= HANDLER ================= */
-export default async function handler(req, res) {
+export default async (req, res) => {
+  console.log("🔥 REQUEST HIT:", req.method, req.url);
+
   await connectDB();
   return serverless(app)(req, res);
-}
+};
