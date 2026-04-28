@@ -18,19 +18,16 @@ dotenv.config();
 
 const app = express();
 
-/* ================= CORS ================= */
-// app.use(
-//   cors({
-//     origin: [
-//       "https://aurct-placement-dashboard-4vo1zx81e-aurct12-7196s-projects.vercel.app",
-//       "https://aurct-placement-dashboard-lju5.vercel.app",
-//     ],
-//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-//     credentials: true,
-//   })
-// );
 
-app.use(cors());
+app.use(
+  cors({
+    origin: [
+      "https://aurct-placement-dashboard-4vo1zx81e-aurct12-7196s-projects.vercel.app",
+      "https://aurct-placement-dashboard-lju5.vercel.app",
+    ],
+    credentials: true,
+  })
+);
 
 /* ================= MIDDLEWARE ================= */
 app.use(express.json());
