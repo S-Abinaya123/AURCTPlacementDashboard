@@ -1,5 +1,4 @@
 import express from "express";
-import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import serverless from "serverless-http";
@@ -13,7 +12,9 @@ import profileRoutes from "../src/routes/profileRoutes.js";
 import placementInterviewRoutes from "../src/routes/placementInterviewRoutes.js";
 import roadmapRoutes from "../src/routes/roadmapRoutes.js";
 import notificationRoutes from "../src/routes/notificationRoutes.js";
+import mongoose from "mongoose";
 
+let isConnected = false;
 dotenv.config();
 
 const app = express();
@@ -54,13 +55,21 @@ app.get("/", (req, res) => {
 });
 
 /* ================= DB ================= */
-let isConnected = false;
 
-const connectDB = async () => {
+export const connectDB = async () => {
   if (isConnected) return;
-  await mongoose.connect(process.env.MONGO_URI);
-  isConnected = true;
-  console.log("MongoDB Connected");
+
+  try {
+    const conn = await mongoose.connect(process.env.MONGO_URI, {
+      bufferCommands: false,
+    });
+
+    isConnected = conn.connections[0].readyState;
+    console.log("MongoDB Connected");
+  } catch (err) {
+    console.error("MongoDB Error:", err);
+    throw err;
+  }
 };
 
 /* ================= EXPORT ================= */
