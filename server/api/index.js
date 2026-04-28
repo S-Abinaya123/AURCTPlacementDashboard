@@ -21,14 +21,39 @@ const app = express();
 /* =================================
    CORS CONFIGURATION
 ================================= */
+// app.use(
+//   cors({
+//     origin: [
+//       "https://aurct-placement-dashboard-4vo1zx81e-aurct12-7196s-projects.vercel.app",
+//       "https://aurct-placement-dashboard-lju5.vercel.app",
+//       "http://localhost:5173", // Useful for local debugging
+//     ],
+//     credentials: true,
+//   })
+// );
+
+/* =================================
+   CORS CONFIGURATION
+================================= */
+const allowedOrigins = [
+  "https://aurct-placement-dashboard.vercel.app"
+];
+
 app.use(
   cors({
-    origin: [
-      "https://aurct-placement-dashboard-4vo1zx81e-aurct12-7196s-projects.vercel.app",
-      "https://aurct-placement-dashboard-lju5.vercel.app",
-      "http://localhost:5173", // Useful for local debugging
-    ],
+    origin: function (origin, callback) {
+      // Allow requests with no origin (like mobile apps or curl)
+      if (!origin) return callback(null, true);
+      
+      if (allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
   })
 );
 
