@@ -36,7 +36,7 @@ const app = express();
    CORS CONFIGURATION
 ================================= */
 const allowedOrigins = [
-  "https://aurct-placement-dashboard.vercel.app"
+  "https://aurct-placement-dashboard.vercel.app","https://aurct-placement-dashboard-kx52.vercel.app"
 ];
 
 app.use(
